@@ -1,18 +1,18 @@
 
-function init(){
-   
-    $("#ticket_form").on("submit",function(e){
-        guardaryeditar(e);	
+function init() {
+
+    $("#ticket_form").on("submit", function (e) {
+        guardaryeditar(e);
     });
-    
+
 }
 
-$(document).ready(function() {
+$(document).ready(function () {
     $('#tick_descrip').summernote({
         height: 150,
         lang: "es-ES",
         callbacks: {
-            onImageUpload: function(image) {
+            onImageUpload: function (image) {
                 console.log("Image detect...");
                 myimagetreat(image[0]);
             },
@@ -30,18 +30,23 @@ $(document).ready(function() {
         ]
     });
 
-    $.post("../../controller/categoria.php?op=combo",function(data, status){
+    $.post("../../controller/categoria.php?op=combo", function (data, status) {
         $('#cat_id').html(data);
     });
 
+    $.post("../../controller/cliente.php?op=combo", function (data) {
+        $('#cliente_id').html(data);
+    });
+
+
 });
 
-function guardaryeditar(e){
+function guardaryeditar(e) {
     e.preventDefault();
     var formData = new FormData($("#ticket_form")[0]);
-    if ($('#tick_descrip').summernote('isEmpty') || $('#tick_titulo').val()==''){
+    if ($('#tick_descrip').summernote('isEmpty') || $('#tick_titulo').val() == '') {
         swal("Advertencia!", "Campos Vacios", "warning");
-    }else{
+    } else {
         var totalfiles = $('#fileElem').val().length;
         for (var i = 0; i < totalfiles; i++) {
             formData.append("files[]", $('#fileElem')[0].files[i]);
@@ -53,11 +58,11 @@ function guardaryeditar(e){
             data: formData,
             contentType: false,
             processData: false,
-            success: function(data){
+            success: function (data) {
                 data = JSON.parse(data);
                 console.log(data[0].tick_id);
 
-                $.post("../../controller/email.php?op=ticket_abierto", {tick_id : data[0].tick_id}, function (data) {
+                $.post("../../controller/email.php?op=ticket_abierto", { tick_id: data[0].tick_id }, function (data) {
 
                 });
 

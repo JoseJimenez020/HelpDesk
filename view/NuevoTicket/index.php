@@ -5,7 +5,7 @@ if (isset($_SESSION["usu_id"])) {
 	<!DOCTYPE html>
 	<html>
 	<?php require_once("../MainHead/head.php"); ?>
-	<title>AnderCode</>::Nuevo Ticket</title>
+	<title>HelpDesk | Nuevo Ticket</title>
 	</head>
 
 	<body class="with-side-menu">
@@ -68,6 +68,18 @@ if (isset($_SESSION["usu_id"])) {
 
 							<div class="col-lg-6">
 								<fieldset class="form-group">
+									<label class="form-label semibold" for="exampleInput">Cliente</label>
+									<select id="cliente_id" name="cliente_id" class="form-control"> </select>
+									<div class="input-group-append">
+										<button id="btnManageClients" type="button" class="btn btn-primary" data-toggle="modal"
+											data-target="#modalClientes">
+											<i class="fa fa-plus"></i> Añadir
+										</button>
+								</fieldset>
+							</div>
+
+							<div class="col-lg-6">
+								<fieldset class="form-group">
 									<label class="form-label semibold" for="exampleInput">Documentos Adicionales</label>
 									<input type="file" name="fileElem" id="fileElem" class="form-control" multiple>
 								</fieldset>
@@ -96,6 +108,7 @@ if (isset($_SESSION["usu_id"])) {
 
 		<?php require_once("../MainJs/js.php"); ?>
 		<?php require_once("modalcategoria.php") ?>
+		<?php require_once("modalclientes.php") ?>
 
 		<script type="text/javascript" src="nuevoticket.js"></script>
 
