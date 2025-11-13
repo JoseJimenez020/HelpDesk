@@ -10,8 +10,8 @@ require_once("../Models/Ticket.php");
 class Email extends PHPMailer{
 
     //variable que contiene el correo del destinatario
-    protected $gCorreo = 'aqui tu correo@dominio.com';
-    protected $gContrasena = 'aqui tu pass';
+    protected $gCorreo = 'jimenezjose308@gmail.com';
+    protected $gContrasena = 'xiyj uqtf cuor klgr';
     //variable que contiene la contraseña del destinatario
 
     public function ticket_abierto($tick_id){
@@ -27,14 +27,14 @@ class Email extends PHPMailer{
 
         //IGual//
         $this->IsSMTP();
-        $this->Host = 'smtp.office365.com';//Aqui el server
+        $this->Host = 'smtp.gmail.com';//Aqui el server
         $this->Port = 587;//Aqui el puerto
         $this->SMTPAuth = true;
         $this->Username = $this->gCorreo;
         $this->Password = $this->gContrasena;
         $this->From = $this->gCorreo;
         $this->SMTPSecure = 'tls';
-        $this->FromName = $this->tu_nombre = "Ticket Abierto ".$id;
+        $this->FromName = $this->tu_nombre = "Ticket n°". $id ."Abierto ";
         $this->CharSet = 'UTF8';
         $this->addAddress($correo);
         $this->WordWrap = 50;
@@ -66,14 +66,14 @@ class Email extends PHPMailer{
 
         //IGual//
         $this->IsSMTP();
-        $this->Host = 'smtp.office365.com';//Aqui el server
+        $this->Host = 'smtp.gmail.com';//Aqui el server
         $this->Port = 587;//Aqui el puerto
         $this->SMTPAuth = true;
         $this->Username = $this->gCorreo;
         $this->Password = $this->gContrasena;
         $this->From = $this->gCorreo;
         $this->SMTPSecure = 'tls';
-        $this->FromName = $this->tu_nombre = "Ticket Cerrado ".$id;
+        $this->FromName = $this->tu_nombre = "Ticket n°" .$id. " Cerrado " ;
         $this->CharSet = 'UTF8';
         $this->addAddress($correo);
         $this->WordWrap = 50;
@@ -105,14 +105,14 @@ class Email extends PHPMailer{
 
         //IGual//
         $this->IsSMTP();
-        $this->Host = 'smtp.office365.com';//Aqui el server
+        $this->Host = 'smtp.gmail.com';//Aqui el server
         $this->Port = 587;//Aqui el puerto
         $this->SMTPAuth = true;
         $this->Username = $this->gCorreo;
         $this->Password = $this->gContrasena;
         $this->From = $this->gCorreo;
         $this->SMTPSecure = 'tls';
-        $this->FromName = $this->tu_nombre = "Ticket Asignado ".$id;
+        $this->FromName = $this->tu_nombre = "Ticket n°".$id." Asignado ";
         $this->CharSet = 'UTF8';
         $this->addAddress($correo);
         $this->WordWrap = 50;
