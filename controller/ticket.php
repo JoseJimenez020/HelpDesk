@@ -18,7 +18,6 @@ switch ($_GET["op"]) {
                 $output["tick_id"] = $row["tick_id"];
 
 
-
                 if ($_FILES['files']['name'] == 0) {
 
                 } else {
