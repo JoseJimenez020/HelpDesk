@@ -18,7 +18,7 @@ switch ($_GET["op"]) {
                 $output["tick_id"] = $row["tick_id"];
 
 
-                if ($_FILES['files']['name'] == 0) {
+                if (!isset($_FILES['files']) || empty($_FILES['files']['name'][0])) {
 
                 } else {
                     $countfiles = count($_FILES['files']['name']);
