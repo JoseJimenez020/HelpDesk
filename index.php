@@ -20,7 +20,7 @@ if (isset($_POST["enviar"]) and $_POST["enviar"] == "si") {
     <link href="img/favicon.72x72.png" rel="apple-touch-icon" type="image/png" sizes="72x72">
     <link href="img/favicon.57x57.png" rel="apple-touch-icon" type="image/png">
     <link href="img/favicon.png" rel="icon" type="image/png">
-    <link href="img/favicon.ico" rel="shortcut icon">
+    <link href="public/img/favicon.ico" rel="shortcut icon">
 
     <link rel="stylesheet" href="public/css/separate/pages/login.min.css">
     <link rel="stylesheet" href="public/css/lib/font-awesome/font-awesome.min.css">
@@ -38,38 +38,38 @@ if (isset($_POST["enviar"]) and $_POST["enviar"] == "si") {
                     <input type="hidden" id="rol_id" name="rol_id" value="2">
 
                     <div class="sign-avatar">
-                        <img src="public/1.jpg" alt="" id="imgtipo">
+                        <img src="public/2.jpg" alt="" id="imgtipo">
                     </div>
                     <header class="sign-title" id="lbltitulo">Acceso Usuario</header>
 
                     <?php
-                    if (isset($_GET["m"])) {
-                        switch ($_GET["m"]) {
-                            case "1";
-                                ?>
-                                <div class="alert alert-warning alert-icon alert-close alert-dismissible fade in" role="alert">
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">×</span>
-                                    </button>
-                                    <i class="font-icon font-icon-warning"></i>
-                                    El Usuario y/o Contraseña son incorrectos.
-                                </div>
-                                <?php
-                                break;
+                        if (isset($_GET["m"])) {
+                            switch ($_GET["m"]) {
+                                case "1";
+                                    ?>
+                                    <div class="alert alert-warning alert-icon alert-close alert-dismissible fade in" role="alert">
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                        <i class="font-icon font-icon-warning"></i>
+                                        El Usuario y/o Contraseña son incorrectos.
+                                    </div>
+                                    <?php
+                                    break;
 
-                            case "2";
-                                ?>
-                                <div class="alert alert-warning alert-icon alert-close alert-dismissible fade in" role="alert">
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">×</span>
-                                    </button>
-                                    <i class="font-icon font-icon-warning"></i>
-                                    Los campos estan vacios.
-                                </div>
-                                <?php
-                                break;
+                                case "2";
+                                    ?>
+                                    <div class="alert alert-warning alert-icon alert-close alert-dismissible fade in" role="alert">
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                        <i class="font-icon font-icon-warning"></i>
+                                        Los campos estan vacios.
+                                    </div>
+                                    <?php
+                                    break;
+                            }
                         }
-                    }
                     ?>
 
                     <div class="form-group">
