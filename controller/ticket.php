@@ -89,6 +89,10 @@ switch ($_GET["op"]) {
             $sub_array[] = $row["tick_id"];
             $sub_array[] = $row["cat_nom"];
             $sub_array[] = $row["tick_titulo"];
+            $minutos_totales = $row["tiempo_total_minutos"];
+            $horas = floor($minutos_totales / 60);
+            $minutos = $minutos_totales % 60;
+            $tiempo_formato = $horas . "h " . $minutos . "m";
 
             // Cliente (mostrar nombre completo o etiqueta si no existe)
             if (empty($row["cli_nom"]) && empty($row["cli_ape"])) {
@@ -105,7 +109,9 @@ switch ($_GET["op"]) {
             } else {
                 $sub_array[] = '<a onClick="CambiarEstado(' . $row["tick_id"] . ')"><span class="label label-pill label-danger">Cerrado</span></a>';
             }
-
+            
+            $sub_array[] = $tiempo_formato;
+            
             $sub_array[] = date("d/m/Y H:i:s", strtotime($row["fech_crea"]));
 
             if ($row["fech_asig"] == null) {
@@ -141,6 +147,11 @@ switch ($_GET["op"]) {
         $data = array();
         foreach ($datos as $row) {
             $sub_array = array();
+            // Lógica para formatear minutos a Horas:Minutos
+            $minutos_totales = $row["tiempo_total_minutos"];
+            $horas = floor($minutos_totales / 60);
+            $minutos = $minutos_totales % 60;
+            $tiempo_formato = $horas . "h " . $minutos . "m";
             $sub_array[] = $row["tick_id"];
             $sub_array[] = $row["cat_nom"];
             $sub_array[] = $row["tick_titulo"];
@@ -159,6 +170,8 @@ switch ($_GET["op"]) {
             } else {
                 $sub_array[] = '<a onClick="CambiarEstado(' . $row["tick_id"] . ')"><span class="label label-pill label-danger">Cerrado</span><a>';
             }
+
+            $sub_array[] = $tiempo_formato;
 
             $sub_array[] = date("d/m/Y H:i:s", strtotime($row["fech_crea"]));
 

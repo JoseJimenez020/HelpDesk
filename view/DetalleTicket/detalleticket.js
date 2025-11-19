@@ -130,6 +130,39 @@ $(document).on("click","#btnenviar", function(){
     }
 });
 
+$(document).on("click","#btnesperaticket", function(){
+    swal({
+        title: "HelpDesk",
+        text: "¿Está seguro de poner el Ticket en Espera?",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonClass: "btn-warning",
+        confirmButtonText: "Si",
+        cancelButtonText: "No",
+        closeOnConfirm: false
+    },
+    function(isConfirm) {
+        if (isConfirm) {
+            var tick_id = getUrlParameter('ID');
+            var usu_id = $('#user_idx').val();
+            
+            // Usamos 'cambiar_estado' y enviamos el estado explícito 'En espera'
+            $.post("../../controller/ticket.php?op=cambiar_estado", { tick_id : tick_id, estado: 'En espera', usu_id : usu_id }, function (data) {
+                
+                // Refrescamos la lista para ver el nuevo log de "Ticket en espera..."
+                listardetalle(tick_id);
+
+                swal({
+                    title: "HelpDesk!",
+                    text: "Ticket puesto en Espera correctamente.",
+                    type: "success",
+                    confirmButtonClass: "btn-success"
+                });
+            });
+        }
+    });
+});
+
 $(document).on("click","#btncerrarticket", function(){
     swal({
         title: "HelpDesk",

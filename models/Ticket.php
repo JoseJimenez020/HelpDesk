@@ -6,8 +6,9 @@ class Ticket extends Conectar
     {
         $conectar = parent::conexion();
         parent::set_names();
-        $sql = "INSERT INTO tm_ticket (tick_id,usu_id,cli_id,cat_id,tick_titulo,tick_descrip,tick_estado,fech_crea,usu_asig,fech_asig,est) 
-                  VALUES (NULL,?,?,?,?,?,'Abierto',now(),NULL,NULL,'1');";
+        // Agregamos fech_estado_ultimo con NOW()
+        $sql = "INSERT INTO tm_ticket (tick_id,usu_id,cli_id,cat_id,tick_titulo,tick_descrip,tick_estado,fech_crea,usu_asig,fech_asig,est, tiempo_acumulado, fech_estado_ultimo) 
+            VALUES (NULL,?,?,?,?,?,'Abierto',now(),NULL,NULL,'1', 0, now());";
         $sql = $conectar->prepare($sql);
         $sql->bindValue(1, $usu_id);
         $sql->bindValue(2, $cli_id);
@@ -34,6 +35,7 @@ class Ticket extends Conectar
                 tm_ticket.cli_id,
                 tm_ticket.tick_descrip,
                 tm_ticket.tick_estado,
+                (tm_ticket.tiempo_acumulado + IF(tm_ticket.tick_estado = 'Abierto', TIMESTAMPDIFF(MINUTE, tm_ticket.fech_estado_ultimo, NOW()), 0)) as tiempo_total_minutos,
                 tm_ticket.fech_crea,
                 tm_ticket.usu_asig,
                 tm_ticket.fech_asig,
@@ -101,6 +103,7 @@ class Ticket extends Conectar
                 tm_ticket.tick_descrip,
                 tm_ticket.cli_id,
                 tm_ticket.tick_estado,
+                (tm_ticket.tiempo_acumulado + IF(tm_ticket.tick_estado = 'Abierto', TIMESTAMPDIFF(MINUTE, tm_ticket.fech_estado_ultimo, NOW()), 0)) as tiempo_total_minutos,
                 tm_ticket.fech_crea,
                 tm_ticket.usu_asig,
                 tm_ticket.fech_asig,
@@ -189,11 +192,14 @@ class Ticket extends Conectar
     {
         $conectar = parent::conexion();
         parent::set_names();
-        $sql = "update tm_ticket 
-                set	
-                    tick_estado = 'Cerrado'
-                where
-                    tick_id = ?";
+        // Al cerrar, sumamos lo que lleve abierto hasta AHORA y limpiamos la fecha
+        $sql = "UPDATE tm_ticket 
+            SET 
+                tick_estado = 'Cerrado',
+                tiempo_acumulado = tiempo_acumulado + IFNULL(TIMESTAMPDIFF(MINUTE, fech_estado_ultimo, NOW()), 0),
+                fech_estado_ultimo = NULL
+            WHERE
+                tick_id = ?";
         $sql = $conectar->prepare($sql);
         $sql->bindValue(1, $tick_id);
         $sql->execute();
@@ -204,11 +210,28 @@ class Ticket extends Conectar
     {
         $conectar = parent::conexion();
         parent::set_names();
-        $sql = "update tm_ticket 
-                set	
-                    tick_estado = ?
-                where
-                    tick_id = ?";
+
+        if ($estado == 'En espera') {
+            // PAUSAR: Calculamos diferencia desde la ultima vez abierto y sumamos al acumulado
+            // Seteamos fech_estado_ultimo a NULL porque ya no está corriendo el tiempo
+            $sql = "UPDATE tm_ticket 
+                SET 
+                    tick_estado = ?,
+                    tiempo_acumulado = tiempo_acumulado + TIMESTAMPDIFF(MINUTE, fech_estado_ultimo, NOW()),
+                    fech_estado_ultimo = NULL
+                WHERE tick_id = ?";
+        } else if ($estado == 'Abierto') {
+            // REANUDAR: Solo actualizamos la fecha de inicio del contador
+            $sql = "UPDATE tm_ticket 
+                SET 
+                    tick_estado = ?,
+                    fech_estado_ultimo = NOW()
+                WHERE tick_id = ?";
+        } else {
+            // Para otros casos (fallback)
+            $sql = "UPDATE tm_ticket SET tick_estado = ? WHERE tick_id = ?";
+        }
+
         $sql = $conectar->prepare($sql);
         $sql->bindValue(1, $estado);
         $sql->bindValue(2, $tick_id);
@@ -216,7 +239,7 @@ class Ticket extends Conectar
         return $resultado = $sql->fetchAll();
     }
 
-        public function insert_ticketdetalle_suspender($tick_id, $usu_id)
+    public function insert_ticketdetalle_suspender($tick_id, $usu_id)
     {
         $conectar = parent::conexion();
         parent::set_names();
@@ -235,11 +258,13 @@ class Ticket extends Conectar
     {
         $conectar = parent::conexion();
         parent::set_names();
-        $sql = "update tm_ticket 
-                set	
-                    tick_estado = 'Abierto'
-                where
-                    tick_id = ?";
+        // Al reabrir, establecemos el NOW() para empezar a contar de nuevo
+        $sql = "UPDATE tm_ticket 
+            SET 
+                tick_estado = 'Abierto',
+                fech_estado_ultimo = NOW()
+            WHERE
+                tick_id = ?";
         $sql = $conectar->prepare($sql);
         $sql->bindValue(1, $tick_id);
         $sql->execute();
