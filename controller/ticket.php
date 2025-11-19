@@ -53,6 +53,30 @@ switch ($_GET["op"]) {
         $ticket->insert_ticketdetalle_reabrir($_POST["tick_id"], $_POST["usu_id"]);
         break;
 
+    case "cambiar_estado":
+        $tick_id = $_POST["tick_id"];
+        $estado = $_POST["estado"];
+
+        // 1. Actualizamos el estado general del ticket
+        $ticket->cambiar_estado($tick_id, $estado);
+
+        // 2. Obtenemos el usuario actual (sacamos esto fuera del IF para usarlo en ambos casos)
+        $usu_id = isset($_SESSION["usu_id"]) ? $_SESSION["usu_id"] : (isset($_POST["usu_id"]) ? $_POST["usu_id"] : null);
+
+        // 3. Lógica condicional para registrar el detalle
+        if ($usu_id != null) {
+            if ($estado == "En espera") {
+                // Si es 'En espera', usa tu función de suspender
+                $ticket->insert_ticketdetalle_suspender($tick_id, $usu_id);
+            } elseif ($estado == "Abierto") {
+                // Si es 'Abierto', usa tu función existente de reabrir
+                $ticket->insert_ticketdetalle_reabrir($tick_id, $usu_id);
+            }
+        }
+
+        echo json_encode(["success" => true]);
+        break;
+
     case "asignar":
         $ticket->update_ticket_asignacion($_POST["tick_id"], $_POST["usu_asig"]);
         break;
@@ -75,7 +99,9 @@ switch ($_GET["op"]) {
             }
 
             if ($row["tick_estado"] == "Abierto") {
-                $sub_array[] = '<span class="label label-pill label-success">Abierto</span>';
+                $sub_array[] = '<a onClick="MoverEstado(' . $row["tick_id"] . ')"><span class="label label-pill label-success">Abierto</span></a>';
+            } elseif ($row["tick_estado"] == "En espera") {
+                $sub_array[] = '<a onClick="MoverEstado(' . $row["tick_id"] . ')"> <span class="label label-pill label-warning">En espera</span> </a>';
             } else {
                 $sub_array[] = '<a onClick="CambiarEstado(' . $row["tick_id"] . ')"><span class="label label-pill label-danger">Cerrado</span></a>';
             }
@@ -127,7 +153,9 @@ switch ($_GET["op"]) {
             }
 
             if ($row["tick_estado"] == "Abierto") {
-                $sub_array[] = '<span class="label label-pill label-success">Abierto</span>';
+                $sub_array[] = '<a onClick="MoverEstado(' . $row["tick_id"] . ')"><span class="label label-pill label-success">Abierto</span></a>';
+            } elseif ($row["tick_estado"] == "En espera") {
+                $sub_array[] = '<a onClick="MoverEstado(' . $row["tick_id"] . ')"> <span class="label label-pill label-warning">En espera</span> </a>';
             } else {
                 $sub_array[] = '<a onClick="CambiarEstado(' . $row["tick_id"] . ')"><span class="label label-pill label-danger">Cerrado</span><a>';
             }
@@ -224,6 +252,8 @@ switch ($_GET["op"]) {
 
                 if ($row["tick_estado"] == "Abierto") {
                     $output["tick_estado"] = '<span class="label label-pill label-success">Abierto</span>';
+                } elseif ($row["tick_estado"] == "En espera") {
+                    $sub_array[] = '<span class="label label-pill label-warning">En espera</span>';
                 } else {
                     $output["tick_estado"] = '<span class="label label-pill label-danger">Cerrado</span>';
                 }

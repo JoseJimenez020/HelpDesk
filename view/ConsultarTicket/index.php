@@ -40,7 +40,7 @@ if (isset($_SESSION["usu_id"])) {
 							<tr>
 								<th style="width: 2%;">N° Ticket</th>
 								<th style="width: 15%;">Categoría</th>
-								<th class="d-none d-sm-table-cell" style="width: 35%;">Título</th>
+								<th class="d-none d-sm-table-cell" style="width: 35%;">Servicios afectados</th>
 								<th class="d-none d-sm-table-cell" style="width: 8%">Cliente</th>
 								<th class="d-none d-sm-table-cell" style="width: 5%;">Estado</th>
 								<th class="d-none d-sm-table-cell" style="width: 10%;">Fecha Creación</th>
@@ -59,6 +59,7 @@ if (isset($_SESSION["usu_id"])) {
 		</div>
 		<!-- Contenido -->
 		<?php require_once("modalasignar.php"); ?>
+		<?php require_once("modalestado.php"); ?>
 
 		<?php require_once("../MainJs/js.php"); ?>
 

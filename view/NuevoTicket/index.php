@@ -36,7 +36,7 @@ if (isset($_SESSION["usu_id"])) {
 
 				<div class="box-typical box-typical-padding">
 					<p>
-						Desde esta ventana podra generar nuevos tickets de HelpDesk.
+						Desde esta ventana podrá generar nuevos tickets de HelpDesk.
 					</p>
 
 					<h5 class="m-t-lg with-border">Ingresar Información</h5>
@@ -45,14 +45,6 @@ if (isset($_SESSION["usu_id"])) {
 						<form method="post" id="ticket_form">
 
 							<input type="hidden" id="usu_id" name="usu_id" value="<?php echo $_SESSION["usu_id"] ?>">
-
-							<div class="col-lg-12">
-								<fieldset class="form-group">
-									<label class="form-label semibold" for="tick_titulo">Titulo</label>
-									<input type="text" class="form-control" id="tick_titulo" name="tick_titulo"
-										placeholder="Ingrese Titulo">
-								</fieldset>
-							</div>
 
 							<div class="col-lg-6">
 								<fieldset class="form-group">
@@ -71,10 +63,18 @@ if (isset($_SESSION["usu_id"])) {
 									<label class="form-label semibold" for="exampleInput">Cliente</label>
 									<select id="cliente_id" name="cliente_id" class="form-control"> </select>
 									<div class="input-group-append">
-										<button id="btnManageClients" type="button" class="btn btn-primary" data-toggle="modal"
-											data-target="#modalClientes">
+										<button id="btnManageClients" type="button" class="btn btn-primary"
+											data-toggle="modal" data-target="#modalClientes">
 											<i class="fa fa-plus"></i> Añadir
 										</button>
+								</fieldset>
+							</div>
+
+							<div class="col-lg-12">
+								<fieldset class="form-group">
+									<label class="form-label semibold" for="tick_titulo">Servicios Afectados</label>
+									<input type="text" class="form-control" id="tick_titulo" name="tick_titulo"
+										placeholder="Ingrese los servicios">
 								</fieldset>
 							</div>
 

@@ -200,6 +200,37 @@ class Ticket extends Conectar
         return $resultado = $sql->fetchAll();
     }
 
+    public function cambiar_estado($tick_id, $estado)
+    {
+        $conectar = parent::conexion();
+        parent::set_names();
+        $sql = "update tm_ticket 
+                set	
+                    tick_estado = ?
+                where
+                    tick_id = ?";
+        $sql = $conectar->prepare($sql);
+        $sql->bindValue(1, $estado);
+        $sql->bindValue(2, $tick_id);
+        $sql->execute();
+        return $resultado = $sql->fetchAll();
+    }
+
+        public function insert_ticketdetalle_suspender($tick_id, $usu_id)
+    {
+        $conectar = parent::conexion();
+        parent::set_names();
+        $sql = "	INSERT INTO td_ticketdetalle 
+                    (tickd_id,tick_id,usu_id,tickd_descrip,fech_crea,est) 
+                    VALUES 
+                    (NULL,?,?,'Ticket en espera...',now(),'0');";
+        $sql = $conectar->prepare($sql);
+        $sql->bindValue(1, $tick_id);
+        $sql->bindValue(2, $usu_id);
+        $sql->execute();
+        return $resultado = $sql->fetchAll();
+    }
+
     public function reabrir_ticket($tick_id)
     {
         $conectar = parent::conexion();

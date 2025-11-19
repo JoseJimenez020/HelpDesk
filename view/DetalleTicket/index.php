@@ -49,7 +49,7 @@ if (isset($_SESSION["usu_id"])) {
 
               <div class="col-lg-6">
                 <fieldset class="form-group">
-                  <label class="form-label semibold" for="tick_titulo">Titulo</label>
+                  <label class="form-label semibold" for="tick_titulo">Servicios Afectados</label>
                   <input type="text" class="form-control" id="tick_titulo" name="tick_titulo" readonly>
                 </fieldset>
               </div>
@@ -71,7 +71,6 @@ if (isset($_SESSION["usu_id"])) {
                 </fieldset>
               </div>
 
-
               <div class="col-lg-12">
                 <fieldset class="form-group">
                   <label class="form-label semibold" for="tickd_descripusu">Descripción</label>
@@ -91,7 +90,7 @@ if (isset($_SESSION["usu_id"])) {
 
         <div class="box-typical box-typical-padding" id="pnldetalle">
           <p>
-            Ingrese su duda o consulta
+            Actualización
           </p>
           <div class="row">
               <div class="col-lg-12">
@@ -104,7 +103,8 @@ if (isset($_SESSION["usu_id"])) {
               </div>
               <div class="col-lg-12">
                 <button type="button" id="btnenviar" class="btn btn-rounded btn-inline btn-primary">Enviar</button>
-                <button type="button" id="btncerrarticket" class="btn btn-rounded btn-inline btn-warning">Cerrar Ticket</button>
+                <button type="button" id="btnesperaticket" class="btn btn-rounded btn-inline btn-warning">Poner en espera</button>                
+                <button type="button" id="btncerrarticket" class="btn btn-rounded btn-inline btn-danger">Cerrar Ticket</button>
               </div>
           </div>
 			  </div>
