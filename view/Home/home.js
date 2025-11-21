@@ -1,70 +1,97 @@
-function init(){
-   
+function init() {
+
 }
 
-$(document).ready(function(){
+$(document).ready(function () {
     var usu_id = $('#user_idx').val();
 
-    if ( $('#rol_idx').val() == 1){
-        $.post("../../controller/usuario.php?op=total", {usu_id:usu_id}, function (data) {
+    if ($('#rol_idx').val() == 1) {
+        $.post("../../controller/usuario.php?op=total", { usu_id: usu_id }, function (data) {
             data = JSON.parse(data);
             $('#lbltotal').html(data.TOTAL);
-        }); 
-    
-        $.post("../../controller/usuario.php?op=totalabierto", {usu_id:usu_id}, function (data) {
+        });
+
+        $.post("../../controller/usuario.php?op=grafico_tiempo", { usu_id: usu_id }, function (data) {
+            //console.log(data);
+            data = JSON.parse(data);
+
+            new Morris.Bar({
+                element: 'divgraficotiempo', // ID del nuevo div
+                data: data,
+                xkey: 'nom',
+                ykeys: ['total'],
+                labels: ['Promedio (min)'], // Etiqueta del valor
+                barColors: ["#17C2A4"], // Color diferente para diferenciarlo
+            });
+        });
+
+        $.post("../../controller/usuario.php?op=totalabierto", { usu_id: usu_id }, function (data) {
             data = JSON.parse(data);
             $('#lbltotalabierto').html(data.TOTAL);
         });
-    
-        $.post("../../controller/usuario.php?op=totalcerrado", {usu_id:usu_id}, function (data) {
+
+        $.post("../../controller/usuario.php?op=totalcerrado", { usu_id: usu_id }, function (data) {
             data = JSON.parse(data);
             $('#lbltotalcerrado').html(data.TOTAL);
         });
 
-        $.post("../../controller/usuario.php?op=grafico", {usu_id:usu_id},function (data) {
+        $.post("../../controller/usuario.php?op=grafico", { usu_id: usu_id }, function (data) {
             data = JSON.parse(data);
-    
+
             new Morris.Bar({
                 element: 'divgrafico',
                 data: data,
                 xkey: 'nom',
                 ykeys: ['total'],
-                labels: ['Value'],
-                barColors: ["#1AB244"], 
+                labels: ['Tickets'],
+                barColors: ["#1AB244"],
             });
-        }); 
+        });
 
-    }else{
-        $.post("../../controller/ticket.php?op=total",function (data) {
+    } else {
+        $.post("../../controller/ticket.php?op=total", function (data) {
             data = JSON.parse(data);
             $('#lbltotal').html(data.TOTAL);
-        }); 
-    
-        $.post("../../controller/ticket.php?op=totalabierto",function (data) {
+        });
+
+        $.post("../../controller/ticket.php?op=totalabierto", function (data) {
             data = JSON.parse(data);
             $('#lbltotalabierto').html(data.TOTAL);
         });
-    
+
         $.post("../../controller/ticket.php?op=totalcerrado", function (data) {
             data = JSON.parse(data);
             $('#lbltotalcerrado').html(data.TOTAL);
-        });  
+        });
 
-        $.post("../../controller/ticket.php?op=grafico",function (data) {
+        $.post("../../controller/ticket.php?op=grafico", function (data) {
             data = JSON.parse(data);
-    
+
             new Morris.Bar({
                 element: 'divgrafico',
                 data: data,
                 xkey: 'nom',
                 ykeys: ['total'],
-                labels: ['Value']
+                labels: ['Tickets']
             });
-        }); 
+        });
+
+       $.post("../../controller/usuario.php?op=grafico_tiempo", {usu_id:usu_id}, function (data) {
+            data = JSON.parse(data);
+
+            new Morris.Bar({
+                element: 'divgraficotiempo', // ID del nuevo div
+                data: data,
+                xkey: 'nom',
+                ykeys: ['total'],
+                labels: ['Promedio (min)'], // Etiqueta del valor
+                barColors: ["#17C2A4"], // Color diferente para diferenciarlo
+            });
+        });
 
     }
 
- 
+
 });
 
 init();

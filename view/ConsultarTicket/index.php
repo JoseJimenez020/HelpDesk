@@ -40,8 +40,8 @@ if (isset($_SESSION["usu_id"])) {
 							<tr>
 								<th style="width: 2%;">N° Ticket</th>
 								<th style="width: 15%;">Categoría</th>
-								<th class="d-none d-sm-table-cell" style="width: 30%;">Servicios afectados</th>
-								<th class="d-none d-sm-table-cell" style="width: 8%">Cliente</th>
+								<th class="d-none d-sm-table-cell" style="width: 28%;">Servicios afectados</th>
+								<th class="d-none d-sm-table-cell" style="width: 10%">Cliente</th>
 								<th class="d-none d-sm-table-cell" style="width: 5%;">Estado</th>
 								<th class="d-none d-sm-table-cell" style="width: 5%;">Tiempo</th>
 								<th class="d-none d-sm-table-cell" style="width: 10%;">Fecha Creación</th>
