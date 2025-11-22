@@ -16,8 +16,8 @@
                     <thead>
                         <tr>
                             <th>ID</th>
+                            <th>Número de cliente</th>
                             <th>Nombre</th>
-                            <th>Apellido</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -28,11 +28,11 @@
                     <form id="cli_form">
                         <input type="hidden" id="cli_id_edit" name="cli_id">
                         <div class="form-group">
-                            <label for="cli_nom">Nombre</label>
+                            <label for="cli_nom">Número de cliente</label>
                             <input type="text" id="cli_nom" name="cli_nom" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label for="cli_ape">Apellido</label>
+                            <label for="cli_ape">Nombre</label>
                             <input type="text" id="cli_ape" name="cli_ape" class="form-control" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Guardar</button>

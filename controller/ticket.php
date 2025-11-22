@@ -11,8 +11,18 @@ $documento = new Documento();
 
 switch ($_GET["op"]) {
 
+    /* Modificar en controller/ticket.php */
     case "insert":
-        $datos = $ticket->insert_ticket($_POST["usu_id"], $_POST["cliente_id"], $_POST["cat_id"], $_POST["tick_titulo"], $_POST["tick_descrip"]);
+        $datos = $ticket->insert_ticket(
+            $_POST["usu_id"],
+            $_POST["cliente_id"],
+            $_POST["cat_id"],
+            $_POST["tick_titulo"],
+            $_POST["tick_descrip"],
+            $_POST["pot_antes"],
+            $_POST["pot_desp"]
+        );
+
         if (is_array($datos) == true and count($datos) > 0) {
             foreach ($datos as $row) {
                 $output["tick_id"] = $row["tick_id"];
@@ -89,6 +99,8 @@ switch ($_GET["op"]) {
             $sub_array[] = $row["tick_id"];
             $sub_array[] = $row["cat_nom"];
             $sub_array[] = $row["tick_titulo"];
+            $sub_array[] = $row["pot_antes"];
+            $sub_array[] = $row["pot_desp"];
             $minutos_totales = $row["tiempo_total_minutos"];
             $horas = floor($minutos_totales / 60);
             $minutos = $minutos_totales % 60;
@@ -109,9 +121,9 @@ switch ($_GET["op"]) {
             } else {
                 $sub_array[] = '<a onClick="CambiarEstado(' . $row["tick_id"] . ')"><span class="label label-pill label-danger">Cerrado</span></a>';
             }
-            
+
             $sub_array[] = $tiempo_formato;
-            
+
             $sub_array[] = date("d/m/Y H:i:s", strtotime($row["fech_crea"]));
 
             if ($row["fech_asig"] == null) {
@@ -155,6 +167,8 @@ switch ($_GET["op"]) {
             $sub_array[] = $row["tick_id"];
             $sub_array[] = $row["cat_nom"];
             $sub_array[] = $row["tick_titulo"];
+            $sub_array[] = $row["pot_antes"];
+            $sub_array[] = $row["pot_desp"]; 
 
             if (empty($row["cli_nom"]) && empty($row["cli_ape"])) {
                 $sub_array[] = '<span class="label label-pill label-default">Sin Cliente</span>';

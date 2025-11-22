@@ -85,6 +85,22 @@ if (isset($_SESSION["usu_id"])) {
 								</fieldset>
 							</div>
 
+							<div class="col-lg-3">
+								<fieldset class="form-group">
+									<label class="form-label semibold" for="pot_antes">Potencia Antes</label>
+									<input type="text" class="form-control" id="pot_antes" name="pot_antes"
+										placeholder="Ingrese la potencia">
+								</fieldset>
+							</div>
+
+							<div class="col-lg-3">
+								<fieldset class="form-group">
+									<label class="form-label semibold" for="pot_desp">Potencia Después</label>
+									<input type="text" class="form-control" id="pot_desp" name="pot_desp"
+										placeholder="Ingrese la potencia">
+								</fieldset>
+							</div>
+
 							<div class="col-lg-12">
 								<fieldset class="form-group">
 									<label class="form-label semibold" for="tick_descrip">Descripción</label>

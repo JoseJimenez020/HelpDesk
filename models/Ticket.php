@@ -2,19 +2,28 @@
 class Ticket extends Conectar
 {
 
-    public function insert_ticket($usu_id, $cli_id, $cat_id, $tick_titulo, $tick_descrip)
+    /* Modificar en models/Ticket.php */
+    public function insert_ticket($usu_id, $cli_id, $cat_id, $tick_titulo, $tick_descrip, $pot_antes, $pot_desp)
     {
         $conectar = parent::conexion();
         parent::set_names();
-        // Agregamos fech_estado_ultimo con NOW()
-        $sql = "INSERT INTO tm_ticket (tick_id,usu_id,cli_id,cat_id,tick_titulo,tick_descrip,tick_estado,fech_crea,usu_asig,fech_asig,est, tiempo_acumulado, fech_estado_ultimo) 
-            VALUES (NULL,?,?,?,?,?,'Abierto',now(),NULL,NULL,'1', 0, now());";
+
+        // Se agregaron las columnas pot_antes y pot_desp en el INSERT y los signos ? en VALUES
+        $sql = "INSERT INTO tm_ticket 
+                (tick_id,usu_id,cli_id,cat_id,tick_titulo,tick_descrip,pot_antes,pot_desp,tick_estado,fech_crea,usu_asig,fech_asig,est, tiempo_acumulado, fech_estado_ultimo) 
+                VALUES 
+                (NULL,?,?,?,?,?,?,?,'Abierto',now(),NULL,NULL,'1', 0, now());";
+
         $sql = $conectar->prepare($sql);
         $sql->bindValue(1, $usu_id);
         $sql->bindValue(2, $cli_id);
         $sql->bindValue(3, $cat_id);
         $sql->bindValue(4, $tick_titulo);
         $sql->bindValue(5, $tick_descrip);
+        // Nuevos bindValue para los parámetros 6 y 7
+        $sql->bindValue(6, $pot_antes);
+        $sql->bindValue(7, $pot_desp);
+
         $sql->execute();
 
         $sql1 = "select last_insert_id() as 'tick_id';";
@@ -23,35 +32,37 @@ class Ticket extends Conectar
         return $resultado = $sql1->fetchAll(pdo::FETCH_ASSOC);
     }
 
+    
     public function listar_ticket_x_usu($usu_id)
     {
         $conectar = parent::conexion();
         parent::set_names();
         $sql = "SELECT 
-                tm_ticket.tick_id,
-                tm_ticket.usu_id,
-                tm_ticket.cat_id,
-                tm_ticket.tick_titulo,
-                tm_ticket.cli_id,
-                tm_ticket.tick_descrip,
-                tm_ticket.tick_estado,
-                (tm_ticket.tiempo_acumulado + IF(tm_ticket.tick_estado = 'Abierto', TIMESTAMPDIFF(MINUTE, tm_ticket.fech_estado_ultimo, NOW()), 0)) as tiempo_total_minutos,
-                tm_ticket.fech_crea,
-                tm_ticket.usu_asig,
-                tm_ticket.fech_asig,
-                tm_usuario.usu_nom,
-                tm_usuario.usu_ape,
-                tm_categoria.cat_nom,
-                tm_clientes.cli_nom,
-                tm_clientes.cli_ape
-                FROM 
-                tm_ticket
-                INNER JOIN tm_categoria on tm_ticket.cat_id = tm_categoria.cat_id
-                INNER JOIN tm_usuario on tm_ticket.usu_id = tm_usuario.usu_id
-                LEFT JOIN tm_clientes on tm_ticket.cli_id = tm_clientes.cli_id
-                WHERE
-                tm_ticket.est = 1
-                AND tm_usuario.usu_id=?";
+            tm_ticket.tick_id,
+            tm_ticket.usu_id,
+            tm_ticket.cat_id,
+            tm_ticket.tick_titulo,
+            tm_ticket.tick_descrip,
+            tm_ticket.pot_antes,
+            tm_ticket.pot_desp,
+            tm_ticket.tick_estado,
+            (tm_ticket.tiempo_acumulado + IF(tm_ticket.tick_estado = 'Abierto', TIMESTAMPDIFF(MINUTE, tm_ticket.fech_estado_ultimo, NOW()), 0)) as tiempo_total_minutos,
+            tm_ticket.fech_crea,
+            tm_ticket.usu_asig,
+            tm_ticket.fech_asig,
+            tm_usuario.usu_nom,
+            tm_usuario.usu_ape,
+            tm_categoria.cat_nom,
+            tm_clientes.cli_nom,
+            tm_clientes.cli_ape
+            FROM 
+            tm_ticket
+            INNER JOIN tm_categoria on tm_ticket.cat_id = tm_categoria.cat_id
+            INNER JOIN tm_usuario on tm_ticket.usu_id = tm_usuario.usu_id
+            LEFT JOIN tm_clientes on tm_ticket.cli_id = tm_clientes.cli_id
+            WHERE
+            tm_ticket.est = 1
+            AND tm_usuario.usu_id=?";
         $sql = $conectar->prepare($sql);
         $sql->bindValue(1, $usu_id);
         $sql->execute();
@@ -91,36 +102,38 @@ class Ticket extends Conectar
         return $resultado = $sql->fetchAll();
     }
 
+    
     public function listar_ticket()
     {
         $conectar = parent::conexion();
         parent::set_names();
         $sql = "SELECT
-                tm_ticket.tick_id,
-                tm_ticket.usu_id,
-                tm_ticket.cat_id,
-                tm_ticket.tick_titulo,
-                tm_ticket.tick_descrip,
-                tm_ticket.cli_id,
-                tm_ticket.tick_estado,
-                (tm_ticket.tiempo_acumulado + IF(tm_ticket.tick_estado = 'Abierto', TIMESTAMPDIFF(MINUTE, tm_ticket.fech_estado_ultimo, NOW()), 0)) as tiempo_total_minutos,
-                tm_ticket.fech_crea,
-                tm_ticket.usu_asig,
-                tm_ticket.fech_asig,
-                tm_usuario.usu_nom,
-                tm_usuario.usu_ape,
-                tm_categoria.cat_nom,
-                tm_clientes.cli_nom,
-                tm_clientes.cli_ape
-                FROM 
-                tm_ticket
-                INNER JOIN tm_categoria on tm_ticket.cat_id = tm_categoria.cat_id
-                INNER JOIN tm_usuario on tm_ticket.usu_id = tm_usuario.usu_id
-                LEFT JOIN tm_clientes on tm_ticket.cli_id = tm_clientes.cli_id
-                WHERE
-                tm_ticket.est = 1
-                ";
-
+            tm_ticket.tick_id,
+            tm_ticket.usu_id,
+            tm_ticket.cat_id,
+            tm_ticket.tick_titulo,
+            tm_ticket.tick_descrip,
+            tm_ticket.pot_antes,
+            tm_ticket.pot_desp,
+            tm_ticket.cli_id,
+            tm_ticket.tick_estado,
+            (tm_ticket.tiempo_acumulado + IF(tm_ticket.tick_estado = 'Abierto', TIMESTAMPDIFF(MINUTE, tm_ticket.fech_estado_ultimo, NOW()), 0)) as tiempo_total_minutos,
+            tm_ticket.fech_crea,
+            tm_ticket.usu_asig,
+            tm_ticket.fech_asig,
+            tm_usuario.usu_nom,
+            tm_usuario.usu_ape,
+            tm_categoria.cat_nom,
+            tm_clientes.cli_nom,
+            tm_clientes.cli_ape
+            FROM 
+            tm_ticket
+            INNER JOIN tm_categoria on tm_ticket.cat_id = tm_categoria.cat_id
+            INNER JOIN tm_usuario on tm_ticket.usu_id = tm_usuario.usu_id
+            LEFT JOIN tm_clientes on tm_ticket.cli_id = tm_clientes.cli_id
+            WHERE
+            tm_ticket.est = 1
+            ";
         $sql = $conectar->prepare($sql);
         $sql->execute();
         return $resultado = $sql->fetchAll();
