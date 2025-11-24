@@ -2,7 +2,7 @@
 class Ticket extends Conectar
 {
 
-    /* Modificar en models/Ticket.php */
+    
     public function insert_ticket($usu_id, $cli_id, $cat_id, $tick_titulo, $tick_descrip, $pot_antes, $pot_desp)
     {
         $conectar = parent::conexion();
@@ -32,7 +32,6 @@ class Ticket extends Conectar
         return $resultado = $sql1->fetchAll(pdo::FETCH_ASSOC);
     }
 
-    
     public function listar_ticket_x_usu($usu_id)
     {
         $conectar = parent::conexion();
@@ -79,6 +78,8 @@ class Ticket extends Conectar
                 tm_ticket.cat_id,
                 tm_ticket.tick_titulo,
                 tm_ticket.tick_descrip,
+                tm_ticket.pot_antes,
+                tm_ticket.pot_desp,
                 tm_ticket.cli_id,
                 tm_ticket.tick_estado,
                 tm_ticket.fech_crea,
@@ -102,7 +103,7 @@ class Ticket extends Conectar
         return $resultado = $sql->fetchAll();
     }
 
-    
+
     public function listar_ticket()
     {
         $conectar = parent::conexion();
@@ -215,6 +216,20 @@ class Ticket extends Conectar
                 tick_id = ?";
         $sql = $conectar->prepare($sql);
         $sql->bindValue(1, $tick_id);
+        $sql->execute();
+        return $resultado = $sql->fetchAll();
+    }
+
+    public function update_ticket_potencia($tick_id, $pot_desp)
+    {
+        $conectar = parent::conexion();
+        parent::set_names();
+        $sql = "UPDATE tm_ticket 
+            SET pot_desp = ? 
+            WHERE tick_id = ?";
+        $sql = $conectar->prepare($sql);
+        $sql->bindValue(1, $pot_desp);
+        $sql->bindValue(2, $tick_id);
         $sql->execute();
         return $resultado = $sql->fetchAll();
     }

@@ -1,8 +1,8 @@
-function init(){
-   
+function init() {
+
 }
 
-$(document).ready(function(){
+$(document).ready(function () {
     var tick_id = getUrlParameter('ID');
 
     listardetalle(tick_id);
@@ -11,7 +11,7 @@ $(document).ready(function(){
         height: 400,
         lang: "es-ES",
         callbacks: {
-            onImageUpload: function(image) {
+            onImageUpload: function (image) {
                 console.log("Image detect...");
                 myimagetreat(image[0]);
             },
@@ -40,11 +40,11 @@ $(document).ready(function(){
             ['para', ['ul', 'ol', 'paragraph']],
             ['height', ['height']]
         ]
-    });  
+    });
 
     $('#tickd_descripusu').summernote('disable');
 
-    tabla=$('#documentos_data').dataTable({
+    tabla = $('#documentos_data').dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -52,46 +52,46 @@ $(document).ready(function(){
         lengthChange: false,
         colReorder: true,
         buttons: [
-                'copyHtml5',
-                'excelHtml5',
-                'csvHtml5',
-                'pdfHtml5'
-                ],
-        "ajax":{
+            'copyHtml5',
+            'excelHtml5',
+            'csvHtml5',
+            'pdfHtml5'
+        ],
+        "ajax": {
             url: '../../controller/documento.php?op=listar',
-            type : "post",
-            data : {tick_id:tick_id},
-            dataType : "json",
-            error: function(e){
+            type: "post",
+            data: { tick_id: tick_id },
+            dataType: "json",
+            error: function (e) {
                 console.log(e.responseText);
             }
         },
         "bDestroy": true,
         "responsive": true,
-        "bInfo":true,
+        "bInfo": true,
         "iDisplayLength": 10,
         "autoWidth": false,
         "language": {
-            "sProcessing":     "Procesando...",
-            "sLengthMenu":     "Mostrar _MENU_ registros",
-            "sZeroRecords":    "No se encontraron resultados",
-            "sEmptyTable":     "Ningún dato disponible en esta tabla",
-            "sInfo":           "Mostrando un total de _TOTAL_ registros",
-            "sInfoEmpty":      "Mostrando un total de 0 registros",
-            "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
-            "sInfoPostFix":    "",
-            "sSearch":         "Buscar:",
-            "sUrl":            "",
-            "sInfoThousands":  ",",
+            "sProcessing": "Procesando...",
+            "sLengthMenu": "Mostrar _MENU_ registros",
+            "sZeroRecords": "No se encontraron resultados",
+            "sEmptyTable": "Ningún dato disponible en esta tabla",
+            "sInfo": "Mostrando un total de _TOTAL_ registros",
+            "sInfoEmpty": "Mostrando un total de 0 registros",
+            "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+            "sInfoPostFix": "",
+            "sSearch": "Buscar:",
+            "sUrl": "",
+            "sInfoThousands": ",",
             "sLoadingRecords": "Cargando...",
             "oPaginate": {
-                "sFirst":    "Primero",
-                "sLast":     "Último",
-                "sNext":     "Siguiente",
+                "sFirst": "Primero",
+                "sLast": "Último",
+                "sNext": "Siguiente",
                 "sPrevious": "Anterior"
             },
             "oAria": {
-                "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
                 "sSortDescending": ": Activar para ordenar la columna de manera descendente"
             }
         }
@@ -118,11 +118,21 @@ $(document).on("click","#btnenviar", function(){
     var tick_id = getUrlParameter('ID');
     var usu_id = $('#user_idx').val();
     var tickd_descrip = $('#tickd_descrip').val();
+    
+    // Capturamos el valor del input potencia despues
+    var pot_desp = $('#pot_desp').val(); 
 
     if ($('#tickd_descrip').summernote('isEmpty')){
         swal("Advertencia!", "Falta Descripción", "warning");
     }else{
+        // 1. Guardamos el detalle (comentario)
         $.post("../../controller/ticket.php?op=insertdetalle", { tick_id:tick_id,usu_id:usu_id,tickd_descrip:tickd_descrip}, function (data) {
+            
+            // 2. Guardamos la potencia ejecutando el nuevo controlador
+            $.post("../../controller/ticket.php?op=update_potencia", { tick_id:tick_id, pot_desp:pot_desp}, function (data) {
+                // No necesitamos hacer nada extra aquí
+            });
+
             listardetalle(tick_id);
             $('#tickd_descrip').summernote('reset');
             swal("Correcto!", "Registrado Correctamente", "success");
@@ -130,7 +140,7 @@ $(document).on("click","#btnenviar", function(){
     }
 });
 
-$(document).on("click","#btnesperaticket", function(){
+$(document).on("click", "#btnesperaticket", function () {
     swal({
         title: "HelpDesk",
         text: "¿Está seguro de poner el Ticket en Espera?",
@@ -141,29 +151,29 @@ $(document).on("click","#btnesperaticket", function(){
         cancelButtonText: "No",
         closeOnConfirm: false
     },
-    function(isConfirm) {
-        if (isConfirm) {
-            var tick_id = getUrlParameter('ID');
-            var usu_id = $('#user_idx').val();
-            
-            // Usamos 'cambiar_estado' y enviamos el estado explícito 'En espera'
-            $.post("../../controller/ticket.php?op=cambiar_estado", { tick_id : tick_id, estado: 'En espera', usu_id : usu_id }, function (data) {
-                
-                // Refrescamos la lista para ver el nuevo log de "Ticket en espera..."
-                listardetalle(tick_id);
+        function (isConfirm) {
+            if (isConfirm) {
+                var tick_id = getUrlParameter('ID');
+                var usu_id = $('#user_idx').val();
 
-                swal({
-                    title: "HelpDesk!",
-                    text: "Ticket puesto en Espera correctamente.",
-                    type: "success",
-                    confirmButtonClass: "btn-success"
+                // Usamos 'cambiar_estado' y enviamos el estado explícito 'En espera'
+                $.post("../../controller/ticket.php?op=cambiar_estado", { tick_id: tick_id, estado: 'En espera', usu_id: usu_id }, function (data) {
+
+                    // Refrescamos la lista para ver el nuevo log de "Ticket en espera..."
+                    listardetalle(tick_id);
+
+                    swal({
+                        title: "HelpDesk!",
+                        text: "Ticket puesto en Espera correctamente.",
+                        type: "success",
+                        confirmButtonClass: "btn-success"
+                    });
                 });
-            });
-        }
-    });
+            }
+        });
 });
 
-$(document).on("click","#btncerrarticket", function(){
+$(document).on("click", "#btncerrarticket", function () {
     swal({
         title: "HelpDesk",
         text: "Esta seguro de Cerrar el Ticket?",
@@ -174,53 +184,55 @@ $(document).on("click","#btncerrarticket", function(){
         cancelButtonText: "No",
         closeOnConfirm: false
     },
-    function(isConfirm) {
-        if (isConfirm) {
-            var tick_id = getUrlParameter('ID');
-            var usu_id = $('#user_idx').val();
-            $.post("../../controller/ticket.php?op=update", { tick_id : tick_id,usu_id : usu_id }, function (data) {
+        function (isConfirm) {
+            if (isConfirm) {
+                var tick_id = getUrlParameter('ID');
+                var usu_id = $('#user_idx').val();
+                $.post("../../controller/ticket.php?op=update", { tick_id: tick_id, usu_id: usu_id }, function (data) {
 
-            });
+                });
 
-            $.post("../../controller/email.php?op=ticket_cerrado", {tick_id : tick_id}, function (data) {
+                $.post("../../controller/email.php?op=ticket_cerrado", { tick_id: tick_id }, function (data) {
 
-            });
+                });
 
 
-            listardetalle(tick_id);
+                listardetalle(tick_id);
 
-            swal({
-                title: "HelpDesk!",
-                text: "Ticket Cerrado correctamente.",
-                type: "success",
-                confirmButtonClass: "btn-success"
-            });
-        }
-    });
+                swal({
+                    title: "HelpDesk!",
+                    text: "Ticket Cerrado correctamente.",
+                    type: "success",
+                    confirmButtonClass: "btn-success"
+                });
+            }
+        });
 });
 
-function listardetalle(tick_id){
-    $.post("../../controller/ticket.php?op=listardetalle", { tick_id : tick_id }, function (data) {
+function listardetalle(tick_id) {
+    $.post("../../controller/ticket.php?op=listardetalle", { tick_id: tick_id }, function (data) {
         $('#lbldetalle').html(data);
-    }); 
+    });
 
-    $.post("../../controller/ticket.php?op=mostrar", { tick_id : tick_id }, function (data) {
+    $.post("../../controller/ticket.php?op=mostrar", { tick_id: tick_id }, function (data) {
         data = JSON.parse(data);
         $('#lblestado').html(data.tick_estado);
-        $('#lblnomusuario').html(data.usu_nom +' '+data.usu_ape);
+        $('#lblnomusuario').html(data.usu_nom + ' ' + data.usu_ape);
         $('#lblfechcrea').html(data.fech_crea);
-        
-        $('#lblnomidticket').html("Detalle Ticket - "+data.tick_id);
+
+        $('#lblnomidticket').html("Detalle Ticket - " + data.tick_id);
 
         $('#cat_nom').val(data.cat_nom);
         $('#tick_titulo').val(data.tick_titulo);
-        $('#tickd_descripusu').summernote ('code',data.tick_descrip);
+        $('#tickd_descripusu').summernote('code', data.tick_descrip);
+        $('#pot_ant').val(data.pot_antes);
+        $('#pot_desp').val(data.pot_desp);
 
-        console.log( data.tick_estado_texto);
-        if (data.tick_estado_texto == "Cerrado"){
+        console.log(data.tick_estado_texto);
+        if (data.tick_estado_texto == "Cerrado") {
             $('#pnldetalle').hide();
         }
-    }); 
+    });
 }
 
 init();

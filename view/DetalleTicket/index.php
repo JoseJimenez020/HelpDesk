@@ -1,7 +1,7 @@
 <?php
 require_once("../../config/conexion.php");
 if (isset($_SESSION["usu_id"])) {
-?>
+  ?>
   <!DOCTYPE html>
   <html>
   <?php require_once("../MainHead/head.php"); ?>
@@ -40,46 +40,60 @@ if (isset($_SESSION["usu_id"])) {
         <div class="box-typical box-typical-padding">
           <div class="row">
 
-              <div class="col-lg-6">
-                <fieldset class="form-group">
-                  <label class="form-label semibold" for="cat_nom">Categoria</label>
-                  <input type="text" class="form-control" id="cat_nom" name="cat_nom" readonly>
-                </fieldset>
-              </div>
+            <div class="col-lg-6">
+              <fieldset class="form-group">
+                <label class="form-label semibold" for="cat_nom">Categoria</label>
+                <input type="text" class="form-control" id="cat_nom" name="cat_nom" readonly>
+              </fieldset>
+            </div>
 
-              <div class="col-lg-6">
-                <fieldset class="form-group">
-                  <label class="form-label semibold" for="tick_titulo">Servicios Afectados</label>
-                  <input type="text" class="form-control" id="tick_titulo" name="tick_titulo" readonly>
-                </fieldset>
-              </div>
+            <div class="col-lg-6">
+              <fieldset class="form-group">
+                <label class="form-label semibold" for="tick_titulo">Servicios Afectados</label>
+                <input type="text" class="form-control" id="tick_titulo" name="tick_titulo" readonly>
+              </fieldset>
+            </div>
 
-              <div class="col-lg-12">
-                <fieldset class="form-group">
-                  <label class="form-label semibold" for="tick_titulo">Documentos Adicionales</label>
-                  <table id="documentos_data" class="table table-bordered table-striped table-vcenter js-dataTable-full">
-                    <thead>
-                      <tr>
-                        <th style="width: 90%;">Nombre</th>
-                        <th class="text-center" style="width: 10%;"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
+            <div class="col-lg-3">
+              <fieldset class="form-group">
+                <label class="form-label semibold" for="pot_ant">Potencia Antes</label>
+                <input type="text" class="form-control" id="pot_ant" name="pot_ant" readonly>
+              </fieldset>
+            </div>
 
-                    </tbody>
-                  </table>
-                </fieldset>
-              </div>
+            <div class="col-lg-3">
+              <fieldset class="form-group">
+                <label class="form-label semibold" for="pot_desp">Potencia Después</label>
+                <input type="text" class="form-control" id="pot_desp" name="pot_desp">
+              </fieldset>
+            </div>
 
-              <div class="col-lg-12">
-                <fieldset class="form-group">
-                  <label class="form-label semibold" for="tickd_descripusu">Descripción</label>
-                  <div class="summernote-theme-1">
-                    <textarea id="tickd_descripusu" name="tickd_descripusu" class="summernote" name="name"></textarea>
-                  </div>
+            <div class="col-lg-12">
+              <fieldset class="form-group">
+                <label class="form-label semibold" for="tick_titulo">Documentos Adicionales</label>
+                <table id="documentos_data" class="table table-bordered table-striped table-vcenter js-dataTable-full">
+                  <thead>
+                    <tr>
+                      <th style="width: 90%;">Nombre</th>
+                      <th class="text-center" style="width: 10%;"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
 
-                </fieldset>
-              </div>
+                  </tbody>
+                </table>
+              </fieldset>
+            </div>
+
+            <div class="col-lg-12">
+              <fieldset class="form-group">
+                <label class="form-label semibold" for="tickd_descripusu">Descripción</label>
+                <div class="summernote-theme-1">
+                  <textarea id="tickd_descripusu" name="tickd_descripusu" class="summernote" name="name"></textarea>
+                </div>
+
+              </fieldset>
+            </div>
 
           </div>
         </div>
@@ -93,21 +107,23 @@ if (isset($_SESSION["usu_id"])) {
             Actualización
           </p>
           <div class="row">
-              <div class="col-lg-12">
-                <fieldset class="form-group">
-                  <label class="form-label semibold" for="tickd_descrip">Descripción</label>
-                  <div class="summernote-theme-1">
-                    <textarea id="tickd_descrip" name="tickd_descrip" class="summernote" name="name"></textarea>
-                  </div>
-                </fieldset>
-              </div>
-              <div class="col-lg-12">
-                <button type="button" id="btnenviar" class="btn btn-rounded btn-inline btn-primary">Enviar</button>
-                <button type="button" id="btnesperaticket" class="btn btn-rounded btn-inline btn-warning">Poner en espera</button>                
-                <button type="button" id="btncerrarticket" class="btn btn-rounded btn-inline btn-danger">Cerrar Ticket</button>
-              </div>
+            <div class="col-lg-12">
+              <fieldset class="form-group">
+                <label class="form-label semibold" for="tickd_descrip">Descripción</label>
+                <div class="summernote-theme-1">
+                  <textarea id="tickd_descrip" name="tickd_descrip" class="summernote" name="name"></textarea>
+                </div>
+              </fieldset>
+            </div>
+            <div class="col-lg-12">
+              <button type="button" id="btnenviar" class="btn btn-rounded btn-inline btn-primary">Enviar</button>
+              <button type="button" id="btnesperaticket" class="btn btn-rounded btn-inline btn-warning">Poner en
+                espera</button>
+              <button type="button" id="btncerrarticket" class="btn btn-rounded btn-inline btn-danger">Cerrar
+                Ticket</button>
+            </div>
           </div>
-			  </div>
+        </div>
 
       </div>
     </div>
@@ -120,7 +136,7 @@ if (isset($_SESSION["usu_id"])) {
   </body>
 
   </html>
-<?php
+  <?php
 } else {
   header("Location:" . Conectar::ruta() . "index.php");
 }

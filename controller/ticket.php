@@ -58,6 +58,10 @@ switch ($_GET["op"]) {
         $ticket->insert_ticketdetalle_cerrar($_POST["tick_id"], $_POST["usu_id"]);
         break;
 
+    case "update_potencia":
+        $ticket->update_ticket_potencia($_POST["tick_id"], $_POST["pot_desp"]);
+        break;
+
     case "reabrir":
         $ticket->reabrir_ticket($_POST["tick_id"]);
         $ticket->insert_ticketdetalle_reabrir($_POST["tick_id"], $_POST["usu_id"]);
@@ -81,6 +85,9 @@ switch ($_GET["op"]) {
             } elseif ($estado == "Abierto") {
                 // Si es 'Abierto', usa tu función existente de reabrir
                 $ticket->insert_ticketdetalle_reabrir($tick_id, $usu_id);
+            } elseif ($estado === "Cerrado") {
+                $ticket->update_ticket($_POST["tick_id"]);
+                $ticket->insert_ticketdetalle_cerrar($_POST["tick_id"], $_POST["usu_id"]);
             }
         }
 
@@ -168,7 +175,7 @@ switch ($_GET["op"]) {
             $sub_array[] = $row["cat_nom"];
             $sub_array[] = $row["tick_titulo"];
             $sub_array[] = $row["pot_antes"];
-            $sub_array[] = $row["pot_desp"]; 
+            $sub_array[] = $row["pot_desp"];
 
             if (empty($row["cli_nom"]) && empty($row["cli_ape"])) {
                 $sub_array[] = '<span class="label label-pill label-default">Sin Cliente</span>';
@@ -276,7 +283,8 @@ switch ($_GET["op"]) {
 
                 $output["tick_titulo"] = $row["tick_titulo"];
                 $output["tick_descrip"] = $row["tick_descrip"];
-
+                $output["pot_antes"] = $row["pot_antes"];
+                $output["pot_desp"] = $row["pot_desp"];
                 if ($row["tick_estado"] == "Abierto") {
                     $output["tick_estado"] = '<span class="label label-pill label-success">Abierto</span>';
                 } elseif ($row["tick_estado"] == "En espera") {
