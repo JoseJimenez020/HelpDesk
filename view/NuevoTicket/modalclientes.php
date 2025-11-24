@@ -18,6 +18,7 @@
                             <th>ID</th>
                             <th>Número de cliente</th>
                             <th>Nombre</th>
+                            <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -34,6 +35,13 @@
                         <div class="form-group">
                             <label for="cli_ape">Nombre</label>
                             <input type="text" id="cli_ape" name="cli_ape" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cli_est">Estado</label>
+                            <select id="cli_est" name="cli_est" class="form-control">
+                                <option value="1">Activo</option>
+                                <option value="0">Inactivo</option>
+                            </select>
                         </div>
                         <button type="submit" class="btn btn-primary">Guardar</button>
                         <button type="button" id="btnCancelCli" class="btn btn-secondary">Cancelar</button>
@@ -63,6 +71,10 @@
                     { data: 'cli_id' },
                     { data: 'cli_nom' },
                     { data: 'cli_ape' },
+                    {
+                        data: 'est',
+                        render: function (data) { return data == 1 ? 'Activo' : 'Inactivo'; }
+                    },
                     {
                         data: null,
                         orderable: false,
@@ -106,12 +118,14 @@
                 clientesTable.ajax.reload();
                 $('#cli_form_container').hide();
 
-                // recargar el combo de clientes en la vista de tickets (si lo hay)
+                // recargar el combo de clientes en la vista de tickets
                 $.post('../../controller/cliente.php?op=combo', function (html) {
-                    // si tienes un select #cli_id en la vista lo actualizas
-                    $('#cli_id').html(html);
+                    // [CORREGIDO] Cambiar '#cli_id' por '#cliente_id'
+                    $('#cliente_id').html(html);
+
                     if (r.cli_id) {
-                        $('#cli_id').val(r.cli_id);
+                        // [CORREGIDO] Seleccionar el nuevo cliente creado
+                        $('#cliente_id').val(r.cli_id);
                     }
                 });
             } else {
@@ -134,6 +148,7 @@
             $('#cli_id_edit').val(d.cli_id);
             $('#cli_nom').val(d.cli_nom);
             $('#cli_ape').val(d.cli_ape);
+            $('#cli_est').val(d.est);
             $('#cli_form_container').show();
         });
     });
@@ -146,15 +161,17 @@
                 try {
                     var r = typeof resp === 'object' ? resp : JSON.parse(resp);
                 } catch (err) {
-                    console.error('Respuesta inválida delete', resp);
-                    alert('Error en la respuesta del servidor');
+                    // ... error handling ...
                     return;
                 }
                 clientesTable.ajax.reload();
+
                 // actualizar combo si existe
                 $.post('../../controller/cliente.php?op=combo', function (html) {
-                    $('#cli_id').html(html);
+                    // [CORREGIDO] Cambiar '#cli_id' por '#cliente_id'
+                    $('#cliente_id').html(html);
                 });
+
             }, 'json');
         }
     });

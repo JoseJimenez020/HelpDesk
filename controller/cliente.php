@@ -60,13 +60,14 @@ switch ($op) {
         $cli_id = isset($_POST['cli_id']) ? intval($_POST['cli_id']) : 0;
         $cli_nom = isset($_POST['cli_nom']) ? trim($_POST['cli_nom']) : '';
         $cli_ape = isset($_POST['cli_ape']) ? trim($_POST['cli_ape']) : '';
+        $cli_est = isset($_POST['cli_est']) ? intval($_POST['cli_est']) : 1;
 
         if ($cli_id <= 0 || $cli_nom === '' || $cli_ape === '') {
             echo json_encode(["ok" => false, "msg" => "Datos incompletos"]);
             exit;
         }
 
-        $ok = $cliente->actualizar($cli_id, $cli_nom, $cli_ape);
+        $ok = $cliente->actualizar($cli_id, $cli_nom, $cli_ape, $cli_est);
         echo json_encode(["ok" => $ok]);
         break;
 

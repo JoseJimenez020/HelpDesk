@@ -6,7 +6,8 @@ class Cliente extends Conectar
     {
         $conectar = parent::conexion();
         parent::set_names();
-        $sql = "SELECT cli_id, cli_nom, cli_ape FROM tm_clientes";
+        // [MODIFICADO] Agregamos WHERE est=1 para no mostrar los borrados
+        $sql = "SELECT cli_id, cli_nom, cli_ape FROM tm_clientes WHERE est=1";
         $stmt = $conectar->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -17,7 +18,7 @@ class Cliente extends Conectar
     {
         $conectar = parent::conexion();
         parent::set_names();
-        $sql = "SELECT cli_id, cli_nom, cli_ape FROM tm_clientes";
+        $sql = "SELECT cli_id, cli_nom, cli_ape, est FROM tm_clientes";
         $stmt = $conectar->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -28,7 +29,7 @@ class Cliente extends Conectar
     {
         $conectar = parent::conexion();
         parent::set_names();
-        $sql = "SELECT cli_id, cli_nom, cli_ape FROM tm_clientes WHERE cli_id = ?";
+        $sql = "SELECT cli_id, cli_nom, cli_ape, est FROM tm_clientes WHERE cli_id = ?";
         $stmt = $conectar->prepare($sql);
         $stmt->bindValue(1, $id, PDO::PARAM_INT);
         $stmt->execute();
@@ -40,26 +41,27 @@ class Cliente extends Conectar
     {
         $conectar = parent::conexion();
         parent::set_names();
-        $sql = "INSERT INTO tm_clientes (cli_nom, cli_ape) VALUES (?, ?)";
+        // [MODIFICADO] Agregamos el campo 'est' con valor '1'
+        $sql = "INSERT INTO tm_clientes (cli_nom, cli_ape, est) VALUES (?, ?, '1')";
         $stmt = $conectar->prepare($sql);
         $ok = $stmt->execute([$nom, $ape]);
         if ($ok) {
             return $conectar->lastInsertId();
         }
-        // registrar error
         $err = $stmt->errorInfo();
         error_log("Cliente::insertar error: SQLSTATE={$err[0]} Code={$err[1]} Msg={$err[2]}");
         return false;
     }
 
     // Actualizar cliente
-    public function actualizar($id, $nom, $ape)
+    public function actualizar($id, $nom, $ape, $est)
     {
         $conectar = parent::conexion();
         parent::set_names();
-        $sql = "UPDATE tm_clientes SET cli_nom = ?, cli_ape = ? WHERE cli_id = ?";
+        // Agregamos "est = ?" en el SQL y el parámetro en el execute
+        $sql = "UPDATE tm_clientes SET cli_nom = ?, cli_ape = ?, est = ? WHERE cli_id = ?";
         $stmt = $conectar->prepare($sql);
-        return $stmt->execute([$nom, $ape, $id]);
+        return $stmt->execute([$nom, $ape, $est, $id]);
     }
 
     // Eliminar cliente (físico). Si prefieres marca lógica, ajusta aquí
@@ -67,7 +69,8 @@ class Cliente extends Conectar
     {
         $conectar = parent::conexion();
         parent::set_names();
-        $sql = "DELETE FROM tm_clientes WHERE cli_id = ?";
+        // Cambiamos DELETE por UPDATE
+        $sql = "UPDATE tm_clientes SET est = 0 WHERE cli_id = ?";
         $stmt = $conectar->prepare($sql);
         return $stmt->execute([$id]);
     }
