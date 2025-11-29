@@ -35,6 +35,40 @@ if (isset($_SESSION["usu_id"])) {
 				</header>
 
 				<div class="box-typical box-typical-padding">
+
+                    <div class="row" style="margin-bottom:15px;">
+                        <div class="col-md-3">
+                            <label>Estado</label>
+                            <select id="filter_estado" class="form-control">
+                            <option value="">Todos</option>
+                            <option value="Abierto">Abierto</option>
+                            <option value="En espera">En espera</option>
+                            <option value="Cerrado">Cerrado</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label>Cliente</label>
+                            <select id="filter_cliente" class="form-control">
+                            <option value="">Todos</option>
+                            <!-- Opciones cargadas por AJAX -->
+                            </select>
+                        </div>
+
+                        <div class="col-md-5">
+                            <label>Fechas</label>
+                            <div class="input-group">
+                            <input type="date" id="filter_fecha_ini" class="form-control" />
+                            <span class="input-group-addon">a</span>
+                            <input type="date" id="filter_fecha_fin" class="form-control" />
+                            <span class="input-group-btn" style="margin-left:8px;">
+                                <button id="btn_filtrar" class="btn btn-primary">Filtrar</button>
+                                <button id="btn_reset" class="btn btn-default">Limpiar</button>
+                            </span>
+                            </div>
+                        </div>
+                    </div>
+
 					<table id="ticket_data" class="table table-bordered table-striped table-vcenter js-dataTable-full">
 						<thead>
 							<tr>
@@ -66,7 +100,7 @@ if (isset($_SESSION["usu_id"])) {
 
 		<?php require_once("../MainJs/js.php"); ?>
 
-		<script type="text/javascript" src="consultarticket.js"></script>
+		<script type="text/javascript" src="dummy.js"></script>
 
 	</body>
 

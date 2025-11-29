@@ -61,7 +61,9 @@ if (isset($_SESSION["usu_id"])) {
 							<div class="col-lg-6">
 								<fieldset class="form-group">
 									<label class="form-label semibold" for="exampleInput">Cliente</label>
-									<select id="cliente_id" name="cliente_id" class="form-control"> </select>
+									<select id="cliente_id" name="cliente_id" class="form-control"> 
+										
+									</select>
 									<div class="input-group-append">
 										<button id="btnManageClients" type="button" class="btn btn-primary"
 											data-toggle="modal" data-target="#modalClientes">
@@ -87,7 +89,7 @@ if (isset($_SESSION["usu_id"])) {
 
 							<div class="col-lg-3">
 								<fieldset class="form-group">
-									<label class="form-label semibold" for="pot_antes">Potencia Antes</label>
+									<label class="form-label semibold" for="pot_antes">Potencia Antes RX|TX</label>
 									<input type="text" class="form-control" id="pot_antes" name="pot_antes"
 										placeholder="Ingrese la potencia">
 								</fieldset>
@@ -95,7 +97,7 @@ if (isset($_SESSION["usu_id"])) {
 
 							<div class="col-lg-3">
 								<fieldset class="form-group">
-									<label class="form-label semibold" for="pot_desp">Potencia Después</label>
+									<label class="form-label semibold" for="pot_desp">Potencia Después RX|TX</label>
 									<input type="text" class="form-control" id="pot_desp" name="pot_desp"
 										placeholder="Ingrese la potencia">
 								</fieldset>

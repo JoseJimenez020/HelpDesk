@@ -27,9 +27,9 @@ class Conectar
     public static function ruta()
     {
         //Local
-        return "http://helpdesk.local.com/";
+        //return "http://localhost/";
         //Produccion
-        //return "http://helpdesk.anderson-bastidas.com/";
+        return "http://fastnetflow.fast-net.net/";
     }
 
 }
