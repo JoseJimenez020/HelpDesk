@@ -97,15 +97,7 @@ switch ($_GET["op"]) {
         break;
 
     case "grafico_tiempo":
-        // VALIDACIÓN DE SEGURIDAD:
-        // Si JS envía el ID, lo usamos. Si no, usamos el ID de la sesión actual.
-        if (isset($_POST["usu_id"])) {
-            $usu_id = $_POST["usu_id"];
-        } else {
-            $usu_id = $_SESSION["usu_id"];
-        }
-
-        $datos = $usuario->get_usuario_grafico_tiempo($usu_id);
+        $datos = $usuario->get_usuario_grafico_tiempo();
         echo json_encode($datos);
         break;
 

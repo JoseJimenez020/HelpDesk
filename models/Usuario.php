@@ -168,22 +168,19 @@ class Usuario extends Conectar
         return $resultado = $sql->fetchAll();
     }
 
-    public function get_usuario_grafico_tiempo($usu_id)
+    public function get_usuario_grafico_tiempo()
     {
         $conectar = parent::conexion();
-        parent::set_names(); // 
-        // Se promedia el tiempo acumulado por categoría para tickets cerrados
+        parent::set_names();
         $sql = "SELECT tm_categoria.cat_nom as nom, ROUND(AVG(tm_ticket.tiempo_acumulado), 2) AS total
-            FROM   tm_ticket  JOIN  
-                tm_categoria ON tm_ticket.cat_id = tm_categoria.cat_id  
-            WHERE    
-            tm_ticket.est = 1
-            AND tm_ticket.tick_estado = 'Cerrado'
-            GROUP BY 
-            tm_categoria.cat_nom 
-            ORDER BY total DESC"; 
-        $sql = $conectar->prepare($sql); 
-        $sql->bindValue(1, $usu_id);
+            FROM tm_ticket
+            JOIN tm_categoria ON tm_ticket.cat_id = tm_categoria.cat_id
+            WHERE tm_ticket.est = 1
+              AND tm_ticket.tick_estado = 'Cerrado'
+            GROUP BY tm_categoria.cat_nom
+            ORDER BY total DESC";
+        $sql = $conectar->prepare($sql);
+        //$sql->bindValue(1, $usu_id);
         $sql->execute();
         return $resultado = $sql->fetchAll();
     }
