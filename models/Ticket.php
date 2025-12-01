@@ -2,7 +2,81 @@
 class Ticket extends Conectar
 {
 
-    
+    public function listar_ticket_filtrado($estado = '', $cliente_id = '', $fecha_ini = '', $fecha_fin = '', $usu_id = null)
+    {
+        $conectar = parent::conexion();
+        parent::set_names();
+
+        $sql = "SELECT
+            tm_ticket.tick_id,
+            tm_ticket.usu_id,
+            tm_ticket.cat_id,
+            tm_ticket.tick_titulo,
+            tm_ticket.tick_descrip,
+            tm_ticket.pot_antes,
+            tm_ticket.pot_desp,
+            tm_ticket.cli_id,
+            tm_ticket.tick_estado,
+            (tm_ticket.tiempo_acumulado + IF(tm_ticket.tick_estado = 'Abierto', TIMESTAMPDIFF(MINUTE, tm_ticket.fech_estado_ultimo, NOW()), 0)) as tiempo_total_minutos,
+            tm_ticket.fech_crea,
+            tm_ticket.usu_asig,
+            tm_ticket.fech_asig,
+            tm_usuario.usu_nom,
+            tm_usuario.usu_ape,
+            tm_categoria.cat_nom,
+            tm_clientes.cli_nom,
+            tm_clientes.cli_ape
+            FROM 
+            tm_ticket
+            INNER JOIN tm_categoria on tm_ticket.cat_id = tm_categoria.cat_id
+            INNER JOIN tm_usuario on tm_ticket.usu_id = tm_usuario.usu_id
+            LEFT JOIN tm_clientes on tm_ticket.cli_id = tm_clientes.cli_id
+            WHERE tm_ticket.est = 1";
+
+        $params = array();
+
+        if (!empty($usu_id)) {
+            $sql .= " AND tm_ticket.usu_id = ?";
+            $params[] = $usu_id;
+        }
+
+        if (!empty($estado)) {
+            $sql .= " AND tm_ticket.tick_estado = ?";
+            $params[] = $estado;
+        }
+
+        if (!empty($cliente_id)) {
+            $sql .= " AND tm_ticket.cli_id = ?";
+            $params[] = $cliente_id;
+        }
+
+        // Filtro por rango de fechas sobre fech_crea
+        if (!empty($fecha_ini) && !empty($fecha_fin)) {
+            $sql .= " AND DATE(tm_ticket.fech_crea) BETWEEN ? AND ?";
+            $params[] = $fecha_ini;
+            $params[] = $fecha_fin;
+        } elseif (!empty($fecha_ini)) {
+            $sql .= " AND DATE(tm_ticket.fech_crea) >= ?";
+            $params[] = $fecha_ini;
+        } elseif (!empty($fecha_fin)) {
+            $sql .= " AND DATE(tm_ticket.fech_crea) <= ?";
+            $params[] = $fecha_fin;
+        }
+
+        $sql .= " ORDER BY tm_ticket.fech_crea DESC";
+
+        $stmt = $conectar->prepare($sql);
+
+        if (count($params) > 0) {
+            foreach ($params as $i => $p) {
+                $stmt->bindValue($i + 1, $p);
+            }
+        }
+
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
     public function insert_ticket($usu_id, $cli_id, $cat_id, $tick_titulo, $tick_descrip, $pot_antes, $pot_desp)
     {
         $conectar = parent::conexion();

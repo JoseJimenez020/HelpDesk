@@ -99,7 +99,19 @@ switch ($_GET["op"]) {
         break;
 
     case "listar_x_usu":
-        $datos = $ticket->listar_ticket_x_usu($_POST["usu_id"]);
+        $estado = isset($_POST['estado']) ? trim($_POST['estado']) : '';
+        $cliente_id = isset($_POST['cliente_id']) ? trim($_POST['cliente_id']) : '';
+        $fecha_ini = isset($_POST['fecha_ini']) ? trim($_POST['fecha_ini']) : '';
+        $fecha_fin = isset($_POST['fecha_fin']) ? trim($_POST['fecha_fin']) : '';
+        $usu_id_post = isset($_POST['usu_id']) ? trim($_POST['usu_id']) : '';
+
+        // Si no viene usu_id por POST, usar el de sesión si existe
+        if (empty($usu_id_post) && isset($_SESSION["usu_id"])) {
+            $usu_id_post = $_SESSION["usu_id"];
+        }
+
+        $datos = $ticket->listar_ticket_filtrado($estado, $cliente_id, $fecha_ini, $fecha_fin, $usu_id_post);
+
         $data = array();
         foreach ($datos as $row) {
             $sub_array = array();
@@ -108,12 +120,12 @@ switch ($_GET["op"]) {
             $sub_array[] = $row["tick_titulo"];
             $sub_array[] = $row["pot_antes"];
             $sub_array[] = $row["pot_desp"];
+
             $minutos_totales = $row["tiempo_total_minutos"];
             $horas = floor($minutos_totales / 60);
             $minutos = $minutos_totales % 60;
             $tiempo_formato = $horas . "h " . $minutos . "m";
 
-            // Cliente (mostrar nombre completo o etiqueta si no existe)
             if (empty($row["cli_nom"]) && empty($row["cli_ape"])) {
                 $sub_array[] = '<span class="label label-pill label-default">Sin Cliente</span>';
             } else {
@@ -130,7 +142,6 @@ switch ($_GET["op"]) {
             }
 
             $sub_array[] = $tiempo_formato;
-
             $sub_array[] = date("d/m/Y H:i:s", strtotime($row["fech_crea"]));
 
             if ($row["fech_asig"] == null) {
@@ -153,29 +164,33 @@ switch ($_GET["op"]) {
         }
 
         $results = array(
-            "sEcho" => 1,
-            "iTotalRecords" => count($data),
-            "iTotalDisplayRecords" => count($data),
-            "aaData" => $data
+            "data" => $data
         );
         echo json_encode($results);
         break;
 
+
     case "listar":
-        $datos = $ticket->listar_ticket();
+        $estado = isset($_POST['estado']) ? trim($_POST['estado']) : '';
+        $cliente_id = isset($_POST['cliente_id']) ? trim($_POST['cliente_id']) : '';
+        $fecha_ini = isset($_POST['fecha_ini']) ? trim($_POST['fecha_ini']) : '';
+        $fecha_fin = isset($_POST['fecha_fin']) ? trim($_POST['fecha_fin']) : '';
+
+        $datos = $ticket->listar_ticket_filtrado($estado, $cliente_id, $fecha_ini, $fecha_fin);
+
         $data = array();
         foreach ($datos as $row) {
             $sub_array = array();
-            // Lógica para formatear minutos a Horas:Minutos
-            $minutos_totales = $row["tiempo_total_minutos"];
-            $horas = floor($minutos_totales / 60);
-            $minutos = $minutos_totales % 60;
-            $tiempo_formato = $horas . "h " . $minutos . "m";
             $sub_array[] = $row["tick_id"];
             $sub_array[] = $row["cat_nom"];
             $sub_array[] = $row["tick_titulo"];
             $sub_array[] = $row["pot_antes"];
             $sub_array[] = $row["pot_desp"];
+
+            $minutos_totales = $row["tiempo_total_minutos"];
+            $horas = floor($minutos_totales / 60);
+            $minutos = $minutos_totales % 60;
+            $tiempo_formato = $horas . "h " . $minutos . "m";
 
             if (empty($row["cli_nom"]) && empty($row["cli_ape"])) {
                 $sub_array[] = '<span class="label label-pill label-default">Sin Cliente</span>';
@@ -189,13 +204,11 @@ switch ($_GET["op"]) {
             } elseif ($row["tick_estado"] == "En espera") {
                 $sub_array[] = '<a onClick="MoverEstado(' . $row["tick_id"] . ')"> <span class="label label-pill label-warning">En espera</span> </a>';
             } else {
-                $sub_array[] = '<a onClick="CambiarEstado(' . $row["tick_id"] . ')"><span class="label label-pill label-danger">Cerrado</span><a>';
+                $sub_array[] = '<a onClick="CambiarEstado(' . $row["tick_id"] . ')"><span class="label label-pill label-danger">Cerrado</span></a>';
             }
 
             $sub_array[] = $tiempo_formato;
-
             $sub_array[] = date("d/m/Y H:i:s", strtotime($row["fech_crea"]));
-
 
             if ($row["fech_asig"] == null) {
                 $sub_array[] = '<span class="label label-pill label-default">Sin Asignar</span>';
@@ -204,7 +217,7 @@ switch ($_GET["op"]) {
             }
 
             if ($row["usu_asig"] == null) {
-                $sub_array[] = '<a onClick="asignar(' . $row["tick_id"] . ');"><span class="label label-pill label-warning">Sin Asignar</span></a>';
+                $sub_array[] = '<span class="label label-pill label-warning">Sin Asignar</span>';
             } else {
                 $datos1 = $usuario->get_usuario_x_id($row["usu_asig"]);
                 foreach ($datos1 as $row1) {
@@ -217,10 +230,7 @@ switch ($_GET["op"]) {
         }
 
         $results = array(
-            "sEcho" => 1,
-            "iTotalRecords" => count($data),
-            "iTotalDisplayRecords" => count($data),
-            "aaData" => $data
+            "data" => $data
         );
         echo json_encode($results);
         break;

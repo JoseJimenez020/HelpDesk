@@ -35,27 +35,64 @@ if (isset($_SESSION["usu_id"])) {
 				</header>
 
 				<div class="box-typical box-typical-padding">
-					<table id="ticket_data" class="table table-bordered table-striped table-vcenter js-dataTable-full">
-						<thead>
-							<tr>
-								<th style="width: 2%;">N°</th>
-								<th style="width: 15%;">Categoría</th>
-								<th class="d-none d-sm-table-cell" style="width: 30%;">Servicios afectados</th>
-								<th class="d-none d-sm-table-cell" style="width: 4%;">P Antes RX|TX</th>
-								<th class="d-none d-sm-table-cell" style="width: 4%;">P Desp RX|TX</th>
-								<th class="d-none d-sm-table-cell" style="width: 10%">Cliente</th>
-								<th class="d-none d-sm-table-cell" style="width: 5%;">Estado</th>
-								<th class="d-none d-sm-table-cell" style="width: 5%;">Tiempo</th>
-								<th class="d-none d-sm-table-cell" style="width: 10%;">Fecha Creación</th>
-								<th class="d-none d-sm-table-cell" style="width: 10%;">Fecha Asignación</th>
-								<th class="d-none d-sm-table-cell" style="width: 5%;">Soporte</th>
-								<th class="text-center" style="width: 5%;"></th>
-							</tr>
-						</thead>
-						<tbody>
 
-						</tbody>
-					</table>
+					<!-- Filtros: Estado, Cliente y Rango de Fechas -->
+					<div class="row" style="margin-bottom:15px;">
+						<div class="col-md-3">
+							<label>Estado</label>
+							<select id="filter_estado" class="form-control">
+								<option value="">Todos</option>
+								<option value="Abierto">Abierto</option>
+								<option value="En espera">En espera</option>
+								<option value="Cerrado">Cerrado</option>
+							</select>
+						</div>
+
+						<div class="col-md-4">
+							<label>Cliente</label>
+							<select id="filter_cliente" class="form-control">
+								<option value="">Todos</option>
+								<!-- Opciones cargadas por AJAX desde controller/cliente.php?op=combo -->
+							</select>
+						</div>
+
+						<div class="col-md-5">
+							<label>Fechas (Fecha de creación)</label>
+							<div class="input-group">
+								<input type="date" id="filter_fecha_ini" class="form-control" />
+								<span class="input-group-addon" style="padding:6px 10px;">a</span>
+								<input type="date" id="filter_fecha_fin" class="form-control" />
+								<span class="input-group-btn" style="margin-left:8px;">
+									<button id="btn_filtrar" class="btn btn-primary">Filtrar</button>
+									<button id="btn_reset" class="btn btn-default">Limpiar</button>
+								</span>
+							</div>
+						</div>
+					</div>
+
+					<!-- Tabla existente -->
+					<div class="box-typical box-typical-padding">
+						<table id="ticket_data" class="table table-bordered table-striped table-vcenter js-dataTable-full">
+							<thead>
+								<tr>
+									<th style="width: 2%;">N°</th>
+									<th style="width: 15%;">Categoría</th>
+									<th class="d-none d-sm-table-cell" style="width: 30%;">Servicios afectados</th>
+									<th class="d-none d-sm-table-cell" style="width: 4%;">P Antes RX|TX</th>
+									<th class="d-none d-sm-table-cell" style="width: 4%;">P Desp RX|TX</th>
+									<th class="d-none d-sm-table-cell" style="width: 10%">Cliente</th>
+									<th class="d-none d-sm-table-cell" style="width: 5%;">Estado</th>
+									<th class="d-none d-sm-table-cell" style="width: 5%;">Tiempo</th>
+									<th class="d-none d-sm-table-cell" style="width: 10%;">Fecha Creación</th>
+									<th class="d-none d-sm-table-cell" style="width: 10%;">Fecha Asignación</th>
+									<th class="d-none d-sm-table-cell" style="width: 5%;">Soporte</th>
+									<th class="text-center" style="width: 5%;"></th>
+								</tr>
+							</thead>
+							<tbody></tbody>
+						</table>
+					</div>
+
 				</div>
 
 			</div>
