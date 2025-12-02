@@ -138,6 +138,17 @@ class Usuario extends Conectar
         return $resultado = $sql->fetchAll();
     }
 
+    public function get_usuario_totalespera_x_id($usu_id)
+    {
+        $conectar = parent::conexion();
+        parent::set_names();
+        $sql = "SELECT COUNT(*) as TOTAL FROM tm_ticket where usu_id = ? and tick_estado='En espera'";
+        $sql = $conectar->prepare($sql);
+        $sql->bindValue(1, $usu_id);
+        $sql->execute();
+        return $resultado = $sql->fetchAll();
+    }
+
     public function get_usuario_totalcerrado_x_id($usu_id)
     {
         $conectar = parent::conexion();

@@ -14,7 +14,7 @@ switch ($op) {
         // Devuelve <option> para selects (no JSON)
         header('Content-Type: text/html; charset=utf-8');
         $datos = $cliente->get_clientes();
-        $html = "";
+        $html = "<option></option>"; // opción vacía para placeholder
         if (is_array($datos) && count($datos) > 0) {
             foreach ($datos as $row) {
                 $label = trim($row['cli_nom'] . ' ' . $row['cli_ape']);
@@ -22,6 +22,7 @@ switch ($op) {
             }
         }
         echo $html;
+
         break;
 
     case "listar":

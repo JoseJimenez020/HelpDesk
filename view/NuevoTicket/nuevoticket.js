@@ -34,9 +34,19 @@ $(document).ready(function () {
         $('#cat_id').html(data);
     });
 
+    $('#cliente_id').select2({
+        placeholder: 'Buscar y seleccionar cliente',
+        allowClear: true,
+        width: '100%',
+    });
+
+    // Cargar opciones desde el servidor
     $.post("../../controller/cliente.php?op=combo", function (data) {
         $('#cliente_id').html(data);
+        
+        $('#cliente_id').trigger('change.select2');
     });
+
 
 
 });

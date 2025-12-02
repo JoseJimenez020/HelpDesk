@@ -83,6 +83,7 @@ function initDataTable(urlAjax) {
                     }
                 }
             },
+
             {
                 extend: 'csvHtml5',
                 text: 'CSV',
@@ -97,6 +98,7 @@ function initDataTable(urlAjax) {
                     }
                 }
             },
+
             {
                 extend: 'copyHtml5',
                 text: 'Copiar',
@@ -128,7 +130,8 @@ function initDataTable(urlAjax) {
                 console.log(e.responseText);
             }
         },
-        "ordering": false,
+
+        "ordering": true,
         "bDestroy": true,
         "responsive": true,
         "bInfo": true,
@@ -208,7 +211,19 @@ function asignar(tick_id) {
         data = JSON.parse(data);
         $('#tick_id').val(data.tick_id);
         $('#mdltitulo').html('Asignar Agente');
-        $("#modalasignar").modal('show');
+
+        // Cargar opciones de usuarios (ajusta la URL a tu controlador de usuarios)
+        $.post("../../controller/usuario.php?op=combo", function (resp) {
+            $('#usu_asig').html(resp);
+            // Si usas Select2, reinit o trigger
+            if ($.fn.select2) {
+                $('#usu_asig').select2({ width: '100%' });
+            }
+            $("#modalasignar").modal('show');
+        }).fail(function (xhr) {
+            console.error('Error cargando usuarios:', xhr.responseText);
+            $("#modalasignar").modal('show'); // mostrar modal aunque no haya opciones
+        });
     });
 }
 

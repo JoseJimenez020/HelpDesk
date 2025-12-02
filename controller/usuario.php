@@ -81,6 +81,16 @@ switch ($_GET["op"]) {
         }
         break;
 
+    case "totalespera";
+        $datos = $usuario->get_usuario_totalespera_x_id($_POST["usu_id"]);
+        if (is_array($datos) == true and count($datos) > 0) {
+            foreach ($datos as $row) {
+                $output["TOTAL"] = $row["TOTAL"];
+            }
+            echo json_encode($output);
+        }
+        break;
+
     case "totalcerrado";
         $datos = $usuario->get_usuario_totalcerrado_x_id($_POST["usu_id"]);
         if (is_array($datos) == true and count($datos) > 0) {
