@@ -34,6 +34,18 @@ function getWeekRange(date) {
     return { start: formatDateISO(monday), end: formatDateISO(sunday) };
 }
 
+function formatMinutesToHrMin(mins) {
+    if (mins === null || mins === undefined || isNaN(mins)) return '';
+    var total = Math.round(parseFloat(mins)); // redondea al minuto más cercano
+    var hours = Math.floor(total / 60);
+    var minutes = total % 60;
+    var parts = [];
+    if (hours > 0) parts.push(hours + 'hr');
+    parts.push(minutes + 'min');
+    return parts.join(' ');
+}
+
+
 // Carga las opciones de semanas desde el servidor (controller/usuario.php?op=semanas)
 function loadWeekOptions(usu_id) {
     $.post("../../controller/usuario.php?op=semanas", { usu_id: usu_id }, function (html) {
@@ -143,16 +155,17 @@ function loadChartsAndTotals(usu_id, rol_id, start_date, end_date) {
                     postUnits: ' min',
                     // Formatea el texto del hover y ticks (opcional, por si quieres decimales)
                     yLabelFormat: function (y) {
-                        // Mostrar sin notación científica y con 2 decimales si es necesario
-                        if (y === null) return '';
-                        return parseFloat(y).toFixed(2);
+                        return formatMinutesToHrMin(y);
                     },
-                    // Opcional: mostrar hover siempre en formato "Promedio: X min"
+
+                    // Opcional: mostrar hover siempre en formato "Promedio: Yhr Xmin"
                     hoverCallback: function (index, options, content, row) {
                         var label = options.labels[0] || 'Promedio';
                         var value = row.total;
-                        return '<div class="morris-hover-row-label">' + row.nom + '</div><div class="morris-hover-point">' + label + ': ' + parseFloat(value).toFixed(2) + ' min</div>';
+                        return '<div class="morris-hover-row-label">' + row.nom + '</div>' +
+                            '<div class="morris-hover-point">' + label + ': ' + formatMinutesToHrMin(value) + '</div>';
                     }
+
                 });
 
                 // Asegurar que la etiqueta fija "Promedio (min)" esté visible en el header
@@ -232,16 +245,17 @@ function loadChartsAndTotals(usu_id, rol_id, start_date, end_date) {
                     postUnits: ' min',
                     // Formatea el texto del hover y ticks (opcional, por si quieres decimales)
                     yLabelFormat: function (y) {
-                        // Mostrar sin notación científica y con 2 decimales si es necesario
-                        if (y === null) return '';
-                        return parseFloat(y).toFixed(2);
+                        return formatMinutesToHrMin(y);
                     },
-                    // Opcional: mostrar hover siempre en formato "Promedio: X min"
+
+                    // Opcional: mostrar hover siempre en formato "Promedio: Yhr Xmin"
                     hoverCallback: function (index, options, content, row) {
                         var label = options.labels[0] || 'Promedio';
                         var value = row.total;
-                        return '<div class="morris-hover-row-label">' + row.nom + '</div><div class="morris-hover-point">' + label + ': ' + parseFloat(value).toFixed(2) + ' min</div>';
+                        return '<div class="morris-hover-row-label">' + row.nom + '</div>' +
+                            '<div class="morris-hover-point">' + label + ': ' + formatMinutesToHrMin(value) + '</div>';
                     }
+
                 });
 
                 // Asegurar que la etiqueta fija "Promedio (min)" esté visible en el header
