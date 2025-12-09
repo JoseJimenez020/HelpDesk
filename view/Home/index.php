@@ -68,8 +68,15 @@ if (isset($_SESSION["usu_id"])) {
 				</section>
 
 				<section class="card">
-					<header class="card-header">
-						Tiempo de Resolución
+					<header class="card-header d-flex align-items-center justify-content-between">
+						<div class="card-title" style="font-weight:600; font-size:16px;">
+							Tiempo de Resolución
+						</div>
+
+						<div class="form-inline">
+							<select id="select_semana" class="form-control"
+								style="display:inline-block; width:auto; font-size:13px; padding:4px 8px;"></select>
+						</div>
 					</header>
 					<div class="card-block">
 						<div id="divgraficotiempo" style="height: 250px;"></div>

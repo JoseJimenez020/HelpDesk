@@ -61,8 +61,17 @@ switch ($_GET["op"]) {
         }
         break;
 
-    case "total";
-        $datos = $usuario->get_usuario_total_x_id($_POST["usu_id"]);
+    case "total":
+        $start = isset($_POST['start_date']) ? $_POST['start_date'] : null;
+        $end = isset($_POST['end_date']) ? $_POST['end_date'] : null;
+        if ($start && $end) {
+            $start_dt = $start . " 00:00:00";
+            $end_dt = $end . " 23:59:59";
+        } else {
+            $start_dt = null;
+            $end_dt = null;
+        }
+        $datos = $usuario->get_usuario_total_x_id($_POST["usu_id"], $start_dt, $end_dt);
         if (is_array($datos) == true and count($datos) > 0) {
             foreach ($datos as $row) {
                 $output["TOTAL"] = $row["TOTAL"];
@@ -71,8 +80,17 @@ switch ($_GET["op"]) {
         }
         break;
 
-    case "totalabierto";
-        $datos = $usuario->get_usuario_totalabierto_x_id($_POST["usu_id"]);
+    case "totalabierto":
+        $start = isset($_POST['start_date']) ? $_POST['start_date'] : null;
+        $end = isset($_POST['end_date']) ? $_POST['end_date'] : null;
+        if ($start && $end) {
+            $start_dt = $start . " 00:00:00";
+            $end_dt = $end . " 23:59:59";
+        } else {
+            $start_dt = null;
+            $end_dt = null;
+        }
+        $datos = $usuario->get_usuario_totalabierto_x_id($_POST["usu_id"], $start_dt, $end_dt);
         if (is_array($datos) == true and count($datos) > 0) {
             foreach ($datos as $row) {
                 $output["TOTAL"] = $row["TOTAL"];
@@ -81,8 +99,17 @@ switch ($_GET["op"]) {
         }
         break;
 
-    case "totalespera";
-        $datos = $usuario->get_usuario_totalespera_x_id($_POST["usu_id"]);
+    case "totalcerrado":
+        $start = isset($_POST['start_date']) ? $_POST['start_date'] : null;
+        $end = isset($_POST['end_date']) ? $_POST['end_date'] : null;
+        if ($start && $end) {
+            $start_dt = $start . " 00:00:00";
+            $end_dt = $end . " 23:59:59";
+        } else {
+            $start_dt = null;
+            $end_dt = null;
+        }
+        $datos = $usuario->get_usuario_totalcerrado_x_id($_POST["usu_id"], $start_dt, $end_dt);
         if (is_array($datos) == true and count($datos) > 0) {
             foreach ($datos as $row) {
                 $output["TOTAL"] = $row["TOTAL"];
@@ -91,25 +118,52 @@ switch ($_GET["op"]) {
         }
         break;
 
-    case "totalcerrado";
-        $datos = $usuario->get_usuario_totalcerrado_x_id($_POST["usu_id"]);
-        if (is_array($datos) == true and count($datos) > 0) {
+
+    case "semanas":
+        // Devuelve opciones <option value="YYYY-MM-DD|YYYY-MM-DD">Semana DD/MM/YYYY - DD/MM/YYYY</option>
+        $datos = $usuario->get_semanas_disponibles(); // método en el modelo (ver abajo)
+        $html = "";
+        if (is_array($datos) && count($datos) > 0) {
             foreach ($datos as $row) {
-                $output["TOTAL"] = $row["TOTAL"];
+                // row tiene start_date y end_date en formato YYYY-MM-DD
+                $start = $row['start_date'];
+                $end = $row['end_date'];
+                $display = date("d/m/Y", strtotime($start)) . " - " . date("d/m/Y", strtotime($end));
+                $html .= "<option value='{$start}|{$end}'>Semana {$display}</option>";
             }
-            echo json_encode($output);
         }
+        echo $html;
         break;
 
-    case "grafico";
-        $datos = $usuario->get_usuario_grafico($_POST["usu_id"]);
+    case "grafico":
+        $start = isset($_POST['start_date']) ? $_POST['start_date'] : null;
+        $end = isset($_POST['end_date']) ? $_POST['end_date'] : null;
+        // Asegurar formato y añadir horas para BETWEEN si vienen fechas
+        if ($start && $end) {
+            $start_dt = $start . " 00:00:00";
+            $end_dt = $end . " 23:59:59";
+        } else {
+            $start_dt = null;
+            $end_dt = null;
+        }
+        $datos = $usuario->get_usuario_grafico($_POST["usu_id"], $start_dt, $end_dt);
         echo json_encode($datos);
         break;
 
     case "grafico_tiempo":
-        $datos = $usuario->get_usuario_grafico_tiempo();
+        $start = isset($_POST['start_date']) ? $_POST['start_date'] : null;
+        $end = isset($_POST['end_date']) ? $_POST['end_date'] : null;
+        if ($start && $end) {
+            $start_dt = $start . " 00:00:00";
+            $end_dt = $end . " 23:59:59";
+        } else {
+            $start_dt = null;
+            $end_dt = null;
+        }
+        $datos = $usuario->get_usuario_grafico_tiempo($start_dt, $end_dt);
         echo json_encode($datos);
         break;
+
 
     case "combo";
         $datos = $usuario->get_usuario_x_rol();

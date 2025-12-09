@@ -116,84 +116,177 @@ class Usuario extends Conectar
         return $resultado = $sql->fetchAll();
     }
 
-    public function get_usuario_total_x_id($usu_id)
-    {
-        $conectar = parent::conexion();
-        parent::set_names();
-        $sql = "SELECT COUNT(*) as TOTAL FROM tm_ticket where usu_id = ?";
-        $sql = $conectar->prepare($sql);
-        $sql->bindValue(1, $usu_id);
-        $sql->execute();
-        return $resultado = $sql->fetchAll();
+   public function get_usuario_total_x_id($usu_id, $start_date = null, $end_date = null)
+{
+    $conectar = parent::conexion();
+    parent::set_names();
+    if ($start_date !== null && $end_date !== null) {
+        $sql = "SELECT COUNT(*) as TOTAL FROM tm_ticket WHERE fech_crea BETWEEN ? AND ?";
+        $stmt = $conectar->prepare($sql);
+        $stmt->bindValue(1, $usu_id);
+        $stmt->bindValue(2, $start_date);
+        $stmt->bindValue(3, $end_date);
+    } else {
+        $sql = "SELECT COUNT(*) as TOTAL FROM tm_ticket WHERE usu_id = ?";
+        $stmt = $conectar->prepare($sql);
+        $stmt->bindValue(1, $usu_id);
     }
+    $stmt->execute();
+    return $stmt->fetchAll();
+}
 
-    public function get_usuario_totalabierto_x_id($usu_id)
-    {
-        $conectar = parent::conexion();
-        parent::set_names();
-        $sql = "SELECT COUNT(*) as TOTAL FROM tm_ticket where usu_id = ? and tick_estado='Abierto'";
-        $sql = $conectar->prepare($sql);
-        $sql->bindValue(1, $usu_id);
-        $sql->execute();
-        return $resultado = $sql->fetchAll();
+
+public function get_usuario_totalabierto_x_id($usu_id, $start_date = null, $end_date = null)
+{
+    $conectar = parent::conexion();
+    parent::set_names();
+    if ($start_date !== null && $end_date !== null) {
+        $sql = "SELECT COUNT(*) as TOTAL FROM tm_ticket WHERE tick_estado='Abierto' AND fech_crea BETWEEN ? AND ?";
+        $stmt = $conectar->prepare($sql);
+        $stmt->bindValue(1, $usu_id);
+        $stmt->bindValue(2, $start_date);
+        $stmt->bindValue(3, $end_date);
+    } else {
+        $sql = "SELECT COUNT(*) as TOTAL FROM tm_ticket WHERE usu_id = ? AND tick_estado='Abierto'";
+        $stmt = $conectar->prepare($sql);
+        $stmt->bindValue(1, $usu_id);
     }
+    $stmt->execute();
+    return $stmt->fetchAll();
+}
+
 
     public function get_usuario_totalespera_x_id($usu_id)
     {
         $conectar = parent::conexion();
         parent::set_names();
-        $sql = "SELECT COUNT(*) as TOTAL FROM tm_ticket where usu_id = ? and tick_estado='En espera'";
+        $sql = "SELECT COUNT(*) as TOTAL FROM tm_ticket and tick_estado='En espera'";
         $sql = $conectar->prepare($sql);
         $sql->bindValue(1, $usu_id);
         $sql->execute();
         return $resultado = $sql->fetchAll();
     }
 
-    public function get_usuario_totalcerrado_x_id($usu_id)
-    {
-        $conectar = parent::conexion();
-        parent::set_names();
-        $sql = "SELECT COUNT(*) as TOTAL FROM tm_ticket where usu_id = ? and tick_estado='Cerrado'";
-        $sql = $conectar->prepare($sql);
-        $sql->bindValue(1, $usu_id);
-        $sql->execute();
-        return $resultado = $sql->fetchAll();
+   public function get_usuario_totalcerrado_x_id($usu_id, $start_date = null, $end_date = null)
+{
+    $conectar = parent::conexion();
+    parent::set_names();
+    if ($start_date !== null && $end_date !== null) {
+        $sql = "SELECT COUNT(*) as TOTAL FROM tm_ticket WHERE tick_estado='Cerrado' AND fech_crea BETWEEN ? AND ?";
+        $stmt = $conectar->prepare($sql);
+        $stmt->bindValue(1, $usu_id);
+        $stmt->bindValue(2, $start_date);
+        $stmt->bindValue(3, $end_date);
+    } else {
+        $sql = "SELECT COUNT(*) as TOTAL FROM tm_ticket WHERE tick_estado='Cerrado'";
+        $stmt = $conectar->prepare($sql);
+        $stmt->bindValue(1, $usu_id);
     }
+    $stmt->execute();
+    return $stmt->fetchAll();
+}
 
-    public function get_usuario_grafico($usu_id)
+
+    public function get_usuario_grafico($usu_id, $start_date = null, $end_date = null)
     {
         $conectar = parent::conexion();
         parent::set_names();
-        $sql = "SELECT tm_categoria.cat_nom as nom,COUNT(*) AS total
-                FROM   tm_ticket  JOIN  
-                    tm_categoria ON tm_ticket.cat_id = tm_categoria.cat_id  
-                WHERE    
-                tm_ticket.est = 1
-                and tm_ticket.usu_id = ?
-                GROUP BY 
-                tm_categoria.cat_nom 
+
+        if ($start_date !== null && $end_date !== null) {
+            $sql = "SELECT tm_categoria.cat_nom as nom, COUNT(*) AS total
+                FROM tm_ticket
+                JOIN tm_categoria ON tm_ticket.cat_id = tm_categoria.cat_id
+                WHERE tm_ticket.est = 1
+                  AND tm_ticket.usu_id = ?
+                  AND tm_ticket.fech_crea BETWEEN ? AND ?
+                GROUP BY tm_categoria.cat_nom
                 ORDER BY total DESC";
-        $sql = $conectar->prepare($sql);
-        $sql->bindValue(1, $usu_id);
-        $sql->execute();
-        return $resultado = $sql->fetchAll();
+            $stmt = $conectar->prepare($sql);
+            $stmt->bindValue(1, $usu_id);
+            $stmt->bindValue(2, $start_date);
+            $stmt->bindValue(3, $end_date);
+        } else {
+            $sql = "SELECT tm_categoria.cat_nom as nom, COUNT(*) AS total
+                FROM tm_ticket
+                JOIN tm_categoria ON tm_ticket.cat_id = tm_categoria.cat_id
+                WHERE tm_ticket.est = 1
+                  AND tm_ticket.usu_id = ?
+                GROUP BY tm_categoria.cat_nom
+                ORDER BY total DESC";
+            $stmt = $conectar->prepare($sql);
+            $stmt->bindValue(1, $usu_id);
+        }
+
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 
-    public function get_usuario_grafico_tiempo()
+
+    public function get_usuario_grafico_tiempo($start_date = null, $end_date = null)
     {
         $conectar = parent::conexion();
         parent::set_names();
-        $sql = "SELECT tm_categoria.cat_nom as nom, ROUND(AVG(tm_ticket.tiempo_acumulado), 2) AS total
+
+        if ($start_date !== null && $end_date !== null) {
+            $sql = "SELECT tm_categoria.cat_nom as nom, ROUND(AVG(tm_ticket.tiempo_acumulado), 2) AS total
+                FROM tm_ticket
+                JOIN tm_categoria ON tm_ticket.cat_id = tm_categoria.cat_id
+                WHERE tm_ticket.est = 1
+                  AND tm_ticket.tick_estado = 'Cerrado'
+                  AND tm_ticket.fech_crea BETWEEN ? AND ?
+                GROUP BY tm_categoria.cat_nom
+                ORDER BY total DESC";
+            $stmt = $conectar->prepare($sql);
+            $stmt->bindValue(1, $start_date);
+            $stmt->bindValue(2, $end_date);
+        } else {
+            $sql = "SELECT tm_categoria.cat_nom as nom, ROUND(AVG(tm_ticket.tiempo_acumulado), 2) AS total
+                FROM tm_ticket
+                JOIN tm_categoria ON tm_ticket.cat_id = tm_categoria.cat_id
+                WHERE tm_ticket.est = 1
+                  AND tm_ticket.tick_estado = 'Cerrado'
+                GROUP BY tm_categoria.cat_nom
+                ORDER BY total DESC";
+            $stmt = $conectar->prepare($sql);
+        }
+
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+
+    public function get_semanas_disponibles()
+    {
+        $conectar = parent::conexion();
+        parent::set_names();
+        // Agrupamos por YEARWEEK con modo 1 (semana empieza lunes) y calculamos inicio y fin
+        $sql = "SELECT 
+                MIN(DATE(fech_crea)) AS min_date,
+                YEARWEEK(fech_crea, 1) AS yw
             FROM tm_ticket
-            JOIN tm_categoria ON tm_ticket.cat_id = tm_categoria.cat_id
-            WHERE tm_ticket.est = 1
-              AND tm_ticket.tick_estado = 'Cerrado'
-            GROUP BY tm_categoria.cat_nom
-            ORDER BY total DESC";
-        $sql = $conectar->prepare($sql);
-        //$sql->bindValue(1, $usu_id);
-        $sql->execute();
-        return $resultado = $sql->fetchAll();
+            WHERE fech_crea IS NOT NULL
+            GROUP BY yw
+            ORDER BY min_date DESC";
+        $stmt = $conectar->prepare($sql);
+        $stmt->execute();
+        $rows = $stmt->fetchAll();
+
+        $result = array();
+        foreach ($rows as $r) {
+            $yw = $r['yw'];
+            // Convertir YEARWEEK a fecha inicio (lunes) y fin (domingo)
+            // Usamos STR_TO_DATE para reconstruir: CONCAT(year, week)
+            $min_date = $r['min_date'];
+            $ts = strtotime($min_date);
+            // Obtener lunes de esa semana
+            $weekday = date('N', $ts); // 1 (Mon) .. 7 (Sun)
+            $monday_ts = strtotime('-' . ($weekday - 1) . ' days', $ts);
+            $sunday_ts = strtotime('+6 days', $monday_ts);
+            $start = date('Y-m-d', $monday_ts);
+            $end = date('Y-m-d', $sunday_ts);
+            $result[] = array('start_date' => $start, 'end_date' => $end);
+        }
+        return $result;
     }
 
     public function update_usuario_pass($usu_id, $usu_pass)
