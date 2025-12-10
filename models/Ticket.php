@@ -420,19 +420,36 @@ class Ticket extends Conectar
         return $resultado = $sql->fetchAll();
     }
 
-    public function get_ticket_grafico()
+    /* Archivo: models/Ticket.php */
+
+    public function get_ticket_grafico($start_date = null, $end_date = null)
     {
         $conectar = parent::conexion();
         parent::set_names();
-        $sql = "SELECT tm_categoria.cat_nom as nom,COUNT(*) AS total
-                FROM   tm_ticket  JOIN  
-                    tm_categoria ON tm_ticket.cat_id = tm_categoria.cat_id  
-                WHERE    
-                tm_ticket.est = 1
-                GROUP BY 
-                tm_categoria.cat_nom 
+
+        // Si vienen fechas, filtramos por fech_crea
+        if ($start_date !== null && $end_date !== null) {
+            $sql = "SELECT tm_categoria.cat_nom as nom, COUNT(*) AS total
+                FROM tm_ticket
+                JOIN tm_categoria ON tm_ticket.cat_id = tm_categoria.cat_id
+                WHERE tm_ticket.est = 1
+                AND tm_ticket.fech_crea BETWEEN ? AND ?
+                GROUP BY tm_categoria.cat_nom
                 ORDER BY total DESC";
-        $sql = $conectar->prepare($sql);
+            $sql = $conectar->prepare($sql);
+            $sql->bindValue(1, $start_date);
+            $sql->bindValue(2, $end_date);
+        } else {
+            // Si no vienen fechas, consulta global (histórica)
+            $sql = "SELECT tm_categoria.cat_nom as nom, COUNT(*) AS total
+                FROM tm_ticket
+                JOIN tm_categoria ON tm_ticket.cat_id = tm_categoria.cat_id
+                WHERE tm_ticket.est = 1
+                GROUP BY tm_categoria.cat_nom
+                ORDER BY total DESC";
+            $sql = $conectar->prepare($sql);
+        }
+
         $sql->execute();
         return $resultado = $sql->fetchAll();
     }

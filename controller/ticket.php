@@ -349,8 +349,24 @@ switch ($_GET["op"]) {
         }
         break;
 
-    case "grafico";
-        $datos = $ticket->get_ticket_grafico();
+    /* Archivo: controller/ticket.php */
+
+    case "grafico":
+        // 1. Capturamos las fechas del POST
+        $start = isset($_POST['start_date']) ? $_POST['start_date'] : null;
+        $end = isset($_POST['end_date']) ? $_POST['end_date'] : null;
+
+        // 2. Preparamos las variables con hora
+        if ($start && $end) {
+            $start_dt = $start . " 00:00:00";
+            $end_dt = $end . " 23:59:59";
+        } else {
+            $start_dt = null;
+            $end_dt = null;
+        }
+
+        // 3. Enviamos las fechas a la función del modelo
+        $datos = $ticket->get_ticket_grafico($start_dt, $end_dt);
         echo json_encode($datos);
         break;
 

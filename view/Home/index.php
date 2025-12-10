@@ -60,7 +60,18 @@ if (isset($_SESSION["usu_id"])) {
 
 				<section class="card">
 					<header class="card-header">
-						Grafico Estadístico
+						<div class="card-title" style="font-weight:600; font-size:16px;">
+							Grafico Estadístico
+						</div>
+
+						<div class="form-inline" style="gap:8px;">
+
+							<select id="select_semana_graf" class="form-control"
+								style="display:inline-block; width:auto; font-size:13px; padding:4px 8px;">
+								<!-- opciones cargadas por AJAX (semanas para la gráfica principal) -->
+							</select>
+						</div>
+
 					</header>
 					<div class="card-block">
 						<div id="divgrafico" style="height: 250px;"></div>
