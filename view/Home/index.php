@@ -70,6 +70,12 @@ if (isset($_SESSION["usu_id"])) {
 								style="display:inline-block; width:auto; font-size:13px; padding:4px 8px;">
 								<!-- opciones cargadas por AJAX (semanas para la gráfica principal) -->
 							</select>
+
+							<select id="select_mes_graf" class="form-control"
+								style="display:inline-block; width:auto; font-size:13px; padding:4px 8px;">
+								<option value="">Seleccionar Mes</option>
+							</select>
+							
 						</div>
 
 					</header>

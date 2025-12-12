@@ -259,7 +259,7 @@ public function get_usuario_totalabierto_x_id($usu_id, $start_date = null, $end_
     {
         $conectar = parent::conexion();
         parent::set_names();
-        // Agrupamos por YEARWEEK con modo 1 (semana empieza lunes) y calculamos inicio y fin
+        // Agrupar YEARWEEK con modo 1 (semana empieza lunes) y calcular inicio y fin
         $sql = "SELECT 
                 MIN(DATE(fech_crea)) AS min_date,
                 YEARWEEK(fech_crea, 1) AS yw

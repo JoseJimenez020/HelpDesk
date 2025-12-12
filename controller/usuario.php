@@ -121,7 +121,7 @@ switch ($_GET["op"]) {
 
     case "semanas":
         // Devuelve opciones <option value="YYYY-MM-DD|YYYY-MM-DD">Semana DD/MM/YYYY - DD/MM/YYYY</option>
-        $datos = $usuario->get_semanas_disponibles(); // método en el modelo (ver abajo)
+        $datos = $usuario->get_semanas_disponibles(); // método en el modelo
         $html = "";
         if (is_array($datos) && count($datos) > 0) {
             foreach ($datos as $row) {
@@ -175,7 +175,7 @@ switch ($_GET["op"]) {
             echo $html;
         }
         break;
-    /* Controller para actualizar contraseña */
+        
     case "password":
         $usuario->update_usuario_pass($_POST["usu_id"], $_POST["usu_pass"]);
         break;

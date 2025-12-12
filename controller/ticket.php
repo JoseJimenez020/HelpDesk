@@ -11,7 +11,6 @@ $documento = new Documento();
 
 switch ($_GET["op"]) {
 
-    /* Modificar en controller/ticket.php */
     case "insert":
         $datos = $ticket->insert_ticket(
             $_POST["usu_id"],

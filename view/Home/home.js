@@ -1,4 +1,3 @@
-// view/Home/home.js
 
 function init() {
     // Placeholder de inicialización
@@ -10,6 +9,25 @@ function formatDateISO(dt) {
     var m = ('0' + (dt.getMonth() + 1)).slice(-2);
     var d = ('0' + dt.getDate()).slice(-2);
     return y + '-' + m + '-' + d;
+}
+
+function loadMonthOptions() {
+    var meses = [
+        "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ];
+    
+    // Obtenemos el año actual
+    var year = new Date().getFullYear();
+    
+    // Limpiamos y agregamos opción por defecto
+    $('#select_mes_graf').empty();
+    $('#select_mes_graf').append('<option value="">Seleccionar Mes</option>');
+
+    for (var i = 0; i < meses.length; i++) {
+        // El value será el índice del mes (0 para Enero, 11 para Diciembre)
+        $('#select_mes_graf').append('<option value="' + i + '">' + meses[i] + ' ' + year + '</option>');
+    }
 }
 
 // Convierte "YYYY-MM-DD|YYYY-MM-DD" a objeto {start, end}
@@ -186,10 +204,38 @@ $(document).ready(function () {
 
     // 1. Configurar SELECT para Gráfico Estadístico (#select_semana_graf)
     loadWeekOptions('#select_semana_graf', usu_id);
+    loadMonthOptions(); // Cargar opciones de mes
     
+    $('#select_mes_graf').on('change', function() {
+        var mesIndex = $(this).val();
+
+        // Si se selecciona "Seleccionar Mes" (vacío), no hacemos nada o recargamos la semana actual
+        if (mesIndex === "") return;
+
+        // Resetear el selector de semanas para que el usuario sepa que está viendo MESES
+        // (Ponemos el valor en null o vacío visualmente)
+        $('#select_semana_graf').val(''); 
+
+        // Calcular primer y último día del mes seleccionado
+        var year = new Date().getFullYear();
+        var primerDia = new Date(year, mesIndex, 1);
+        var ultimoDia = new Date(year, parseInt(mesIndex) + 1, 0); // El día 0 del siguiente mes es el último del actual
+
+        // Usamos tu función existente formatDateISO [cite: 5]
+        var start_date = formatDateISO(primerDia);
+        var end_date = formatDateISO(ultimoDia);
+
+        // Llamamos a tu función existente de Gráfico [cite: 17]
+        loadGraficoEstadistico(usu_id, rol_id, start_date, end_date);
+    });
+
     $('#select_semana_graf').on('change', function () {
         var val = $(this).val();
         if (!val) return;
+
+        // Resetear el selector de Meses para indicar que ahora mandan las SEMANAS
+        $('#select_mes_graf').val('');
+
         var range = getWeekRangeFromString(val);
         // LLAMA SOLO A LA FUNCIÓN DEL GRÁFICO ESTADÍSTICO
         loadGraficoEstadistico(usu_id, rol_id, range.start, range.end);
