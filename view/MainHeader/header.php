@@ -1,6 +1,25 @@
 <header class="site-header">
     <div class="container-fluid">
+    <style>
+        /* Aplica a tus enlaces de categoría: <a class="btn-categoria">...</a> */
+.btn-categoria {
+  color: #333333;        /* color neutro, no azul */
+  text-decoration: none; /* quita subrayado */
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  font-weight: 600;      /* opcional: resalta sin usar color */
+}
 
+/* Mantener sin subrayado al pasar el ratón y ajustar color hover */
+.btn-categoria:hover,
+.btn-categoria:focus {
+  color: #000000;
+  text-decoration: none;
+  outline: none;
+}
+    </style>
         <a href="#" class="site-logo">
             <img class="hidden-md-down" src="../../public/img/logo-2.png" alt="">
             <img class="hidden-lg-up" src="../../public/img/logo-2-mob.png" alt="">

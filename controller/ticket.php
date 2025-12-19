@@ -115,7 +115,10 @@ switch ($_GET["op"]) {
         foreach ($datos as $row) {
             $sub_array = array();
             $sub_array[] = $row["tick_id"];
-            $sub_array[] = $row["cat_nom"];
+            $cat_id_val = $row["cat_id"];
+            $cat_nom_esc = htmlspecialchars($row["cat_nom"]);
+            $sub_array[] = '<a href="javascript:void(0);" class="btn-categoria" data-tick="' . $row["tick_id"] . '" data-cat="' . $cat_id_val . '">' . $cat_nom_esc . '</a>';
+
             $sub_array[] = $row["tick_titulo"];
             $sub_array[] = $row["pot_antes"];
             $sub_array[] = $row["pot_desp"];
@@ -181,7 +184,9 @@ switch ($_GET["op"]) {
         foreach ($datos as $row) {
             $sub_array = array();
             $sub_array[] = $row["tick_id"];
-            $sub_array[] = $row["cat_nom"];
+            $cat_id_val = $row["cat_id"];
+            $cat_nom_esc = htmlspecialchars($row["cat_nom"]);
+            $sub_array[] = '<a href="javascript:void(0);" class="btn-categoria" data-tick="' . $row["tick_id"] . '" data-cat="' . $cat_id_val . '">' . $cat_nom_esc . '</a>';
             $sub_array[] = $row["tick_titulo"];
             $sub_array[] = $row["pot_antes"];
             $sub_array[] = $row["pot_desp"];

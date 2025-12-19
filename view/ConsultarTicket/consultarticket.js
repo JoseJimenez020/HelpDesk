@@ -203,7 +203,7 @@ $(document).ready(function () {
 });
 
 function ver(tick_id) {
-  window.location.href = 'http://fastnetflow.fast-net.net/view/DetalleTicket/?ID=' + tick_id;
+    window.location.href = 'http://fastnetflow.fast-net.net/view/DetalleTicket/?ID=' + tick_id;
 }
 
 function asignar(tick_id) {
@@ -295,4 +295,71 @@ function CambiarEstado(tick_id) {
         });
 }
 
+// --- Inicio parche modal categoría ---
+
+// Cargar opciones de categorías para el modal (puedes llamarlo al inicio)
+function cargarCategoriasModal(selectedCatId) {
+    $.post("../../controller/categoria.php?op=combo", function (data) {
+        // 'data' debe contener <option value="ID">Nombre</option>
+        $('#cat_id_modal').html(data);
+        if (typeof selectedCatId !== 'undefined' && selectedCatId !== null) {
+            $('#cat_id_modal').val(selectedCatId);
+        }
+    }).fail(function (xhr) {
+        console.error('Error cargando categorias:', xhr.responseText);
+    });
+}
+
+// Abrir modal desde la celda clicada
+$(document).on('click', '.btn-categoria', function () {
+    var tick_id = $(this).data('tick');
+    var cat_id = $(this).data('cat');
+
+    // Setear valores en el modal
+    $('#tick_id_cat').val(tick_id);
+    // Cargar las categorias y seleccionar la actual
+    cargarCategoriasModal(cat_id);
+
+    $('#mdltitulo_categoria').text('Cambiar Categoría - Ticket ' + tick_id);
+    $('#modalcategoria').modal('show');
+});
+
+// Manejar submit del modal
+$(document).on('submit', '#ticket_categoria_form', function (e) {
+    e.preventDefault();
+    var tick_id = $('#tick_id_cat').val();
+    var cat_id = $('#cat_id_modal').val();
+    var usu_id = $('#user_idx').val(); // opcional, para auditoría
+
+    if (!tick_id || !cat_id) {
+        swal("Error", "Faltan datos para actualizar la categoría", "error");
+        return;
+    }
+
+    // Petición para actualizar categoría (controller debe tener op=update_categoria)
+    $.post("../../controller/ticket.php?op=update_categoria", { tick_id: tick_id, cat_id: cat_id }, function (resp) {
+        try {
+            var data = (typeof resp === 'object') ? resp : JSON.parse(resp);
+            if (data.success) {
+                // Opcional: si el servidor no registra detalle, podrías insertar detalle aquí
+                //$.post("../../controller/ticket.php?op=insertdetalle", { tick_id: tick_id, usu_id: usu_id, tickd_descrip: "Categoría reasignada"});
+
+                $('#modalcategoria').modal('hide');
+                $('#ticket_data').DataTable().ajax.reload(null, false); // refrescar tabla sin resetear paginación
+                swal("Correcto!", "Categoría actualizada correctamente", "success");
+            } else {
+                console.error('update_categoria error:', data);
+                swal("Error!", data.message || "No se pudo actualizar la categoría", "error");
+            }
+        } catch (e) {
+            console.error('Respuesta inválida update_categoria:', resp, e);
+            swal("Error!", "Respuesta inválida del servidor", "error");
+        }
+    }).fail(function (xhr, status, err) {
+        console.error('AJAX fail update_categoria:', status, err, xhr.responseText);
+        swal("Error!", "Fallo en la petición para actualizar categoría", "error");
+    });
+});
+
+// --- Fin parche modal categoría ---
 init();
