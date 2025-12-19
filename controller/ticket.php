@@ -369,6 +369,24 @@ switch ($_GET["op"]) {
         echo json_encode($datos);
         break;
 
+    case "update_categoria":
+        $tick_id = isset($_POST["tick_id"]) ? intval($_POST["tick_id"]) : 0;
+        $cat_id = isset($_POST["cat_id"]) ? intval($_POST["cat_id"]) : 0;
+        if ($tick_id > 0 && $cat_id > 0) {
+            $res = $ticket->update_ticket_categoria($tick_id, $cat_id);
+            if ($res) {
+                // opcional: registrar detalle de cambio
+                /*if (isset($_SESSION["usu_id"])) {
+                    $ticket->insert_ticketdetalle($tick_id, $_SESSION["usu_id"], "Categoría resignada");
+                }*/
+                echo json_encode(["success" => true]);
+            } else {
+                echo json_encode(["success" => false, "message" => "No se actualizó registro"]);
+            }
+        } else {
+            echo json_encode(["success" => false, "message" => "Parámetros inválidos"]);
+        }
+        break;
 }
 
 ?>

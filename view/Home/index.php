@@ -75,7 +75,7 @@ if (isset($_SESSION["usu_id"])) {
 								style="display:inline-block; width:auto; font-size:13px; padding:4px 8px;">
 								<option value="">Seleccionar Mes</option>
 							</select>
-							
+
 						</div>
 
 					</header>

@@ -38,12 +38,12 @@ if (isset($_SESSION["usu_id"])) {
         </header>
 
         <div class="box-typical box-typical-padding">
+          
           <div class="row">
-
             <div class="col-lg-6">
               <fieldset class="form-group">
                 <label class="form-label semibold" for="cat_nom">Categoria</label>
-                <input type="text" class="form-control" id="cat_nom" name="cat_nom" readonly>
+                <select id="cat_id" name="cat_id" class="form-control"> </select>
               </fieldset>
             </div>
 

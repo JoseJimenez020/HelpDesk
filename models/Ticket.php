@@ -454,5 +454,21 @@ class Ticket extends Conectar
         return $resultado = $sql->fetchAll();
     }
 
+    public function update_ticket_categoria($tick_id, $cat_id)
+    {
+        // Obtener la conexión PDO desde la clase padre
+        $con = parent::conexion();
+
+        // Preparar y ejecutar con PDO (parámetros nombrados o posicionales)
+        $sql = "UPDATE tm_ticket SET cat_id = :cat_id, fech_estado_ultimo = NOW() WHERE tick_id = :tick_id";
+        $stmt = $con->prepare($sql);
+        $ok = $stmt->execute([
+            ':cat_id' => intval($cat_id),
+            ':tick_id' => intval($tick_id)
+        ]);
+
+        return $ok;
+    }
+
 }
 ?>

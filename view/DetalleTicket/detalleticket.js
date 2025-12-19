@@ -1,3 +1,8 @@
+// detalleticket.js - parche completo listo para pegar
+var tabla;
+var originalCategory = null;
+var categoryChanged = false;
+
 function init() {
 
 }
@@ -5,7 +10,31 @@ function init() {
 $(document).ready(function () {
     var tick_id = getUrlParameter('ID');
 
-    listardetalle(tick_id);
+    // Cargar combo de categorias primero para evitar condiciones de carrera
+    $.post("../../controller/categoria.php?op=combo", function (data, status) {
+        $('#cat_id').html(data);
+
+        // Después de cargar las categorías, cargamos el detalle del ticket
+        listardetalle(tick_id);
+    });
+
+    $('#cliente_id').select2({
+        placeholder: 'Buscar y seleccionar cliente',
+        allowClear: true,
+        width: '100%',
+    });
+
+    // Cargar opciones desde el servidor para clientes
+    $.post("../../controller/cliente.php?op=combo", function (data) {
+        $('#cliente_id').html(data);
+        $('#cliente_id').trigger('change.select2');
+    });
+
+    // Detectar cambio en el select de categoría
+    $(document).on('change', '#cat_id', function () {
+        var selected = $(this).val();
+        categoryChanged = (selected != originalCategory);
+    });
 
     $('#tickd_descrip').summernote({
         height: 400,
@@ -114,30 +143,78 @@ var getUrlParameter = function getUrlParameter(sParam) {
     }
 };
 
-$(document).on("click","#btnenviar", function(){
+$(document).on("click", "#btnenviar", function () {
     var tick_id = getUrlParameter('ID');
     var usu_id = $('#user_idx').val();
     var tickd_descrip = $('#tickd_descrip').val();
-    
-    // Capturamos el valor del input potencia despues
-    var pot_desp = $('#pot_desp').val(); 
+    var pot_desp = $('#pot_desp').val();
+    var cat_id = $('#cat_id').val();
 
-    if ($('#tickd_descrip').summernote('isEmpty')){
-        swal("Advertencia!", "Falta Descripción", "warning");
-    }else{
-        // 1. Guardamos el detalle (comentario)
-        $.post("../../controller/ticket.php?op=insertdetalle", { tick_id:tick_id,usu_id:usu_id,tickd_descrip:tickd_descrip}, function (data) {
-            
-            // 2. Guardamos la potencia ejecutando el nuevo controlador
-            $.post("../../controller/ticket.php?op=update_potencia", { tick_id:tick_id, pot_desp:pot_desp}, function (data) {
-                // No necesitamos hacer nada extra aquí
-            });
+    var hasDescription = !$('#tickd_descrip').summernote('isEmpty');
 
-            listardetalle(tick_id);
-            $('#tickd_descrip').summernote('reset');
-            swal("Correcto!", "Registrado Correctamente", "success");
-        }); 
+    if (!hasDescription && !categoryChanged) {
+        swal("Advertencia!", "Falta Descripción o no se detectó cambio de categoría", "warning");
+        return;
     }
+
+    // Función para guardar detalle (si existe descripción)
+    var saveDetail = function (callback) {
+        if (hasDescription) {
+            $.post("../../controller/ticket.php?op=insertdetalle", { tick_id: tick_id, usu_id: usu_id, tickd_descrip: tickd_descrip }, function (data) {
+                $('#tickd_descrip').summernote('reset');
+                if (callback) callback();
+            });
+        } else {
+            if (callback) callback();
+        }
+    };
+
+    // Función para guardar categoría si cambió
+    var saveCategory = function (callback) {
+        if (categoryChanged) {
+            console.log("Guardando categoría. tick_id:", tick_id, "cat_id:", cat_id);
+            $.post("../../controller/ticket.php?op=update_categoria", { tick_id: tick_id, cat_id: cat_id }, function (data) {
+                try {
+                    var resp = (typeof data === 'object') ? data : JSON.parse(data);
+                    if (resp.success) {
+                        console.log("update_categoria: success");
+                        // actualizar bandera y original
+                        originalCategory = cat_id;
+                        categoryChanged = false;
+                        if (callback) callback();
+                    } else {
+                        console.error("update_categoria: fallo en servidor", resp);
+                        swal("Error!", "No se pudo actualizar la categoría en el servidor.", "error");
+                    }
+                } catch (e) {
+                    console.error("update_categoria: respuesta inválida", data, e);
+                    swal("Error!", "Respuesta inválida del servidor al actualizar categoría.", "error");
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                console.error("update_categoria: request failed", textStatus, errorThrown, jqXHR.responseText);
+                swal("Error!", "Fallo en la petición para actualizar categoría.", "error");
+            });
+        } else {
+            if (callback) callback();
+        }
+    };
+
+    // Función para guardar potencia
+    var savePotencia = function (callback) {
+        $.post("../../controller/ticket.php?op=update_potencia", { tick_id: tick_id, pot_desp: pot_desp }, function (data) {
+            if (callback) callback();
+        });
+    };
+
+    // Ejecutar en secuencia: detalle -> categoria -> potencia -> refrescar
+    saveDetail(function () {
+        saveCategory(function () {
+            savePotencia(function () {
+                listardetalle(tick_id);
+                swal("Correcto!", "Registrado Correctamente", "success");
+            });
+        });
+    });
 });
 
 $(document).on("click", "#btnesperaticket", function () {
@@ -222,7 +299,13 @@ function listardetalle(tick_id) {
 
         $('#lblnomidticket').html("Detalle Ticket - " + data.tick_id);
 
-        $('#cat_nom').val(data.cat_nom);
+        // Asignar categoría y guardar la original para detectar cambios
+        if (typeof data.cat_id !== 'undefined' && data.cat_id !== null) {
+            $('#cat_id').val(data.cat_id).trigger('change');
+            originalCategory = data.cat_id;
+            categoryChanged = false;
+        }
+
         $('#tick_titulo').val(data.tick_titulo);
         $('#tickd_descripusu').summernote('code', data.tick_descrip);
         $('#pot_ant').val(data.pot_antes);
@@ -231,6 +314,8 @@ function listardetalle(tick_id) {
         console.log(data.tick_estado_texto);
         if (data.tick_estado_texto == "Cerrado") {
             $('#pnldetalle').hide();
+        } else {
+            $('#pnldetalle').show();
         }
     });
 }
