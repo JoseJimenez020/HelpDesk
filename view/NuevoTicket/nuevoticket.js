@@ -35,7 +35,7 @@ $(document).ready(function () {
     });
 
     $('#cliente_id').select2({
-        placeholder: 'Buscar y seleccionar cliente',
+        placeholder: 'Buscar cliente',
         allowClear: true,
         width: '100%',
     });

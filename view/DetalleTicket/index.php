@@ -43,7 +43,7 @@ if (isset($_SESSION["usu_id"])) {
             <div class="col-lg-6">
               <fieldset class="form-group">
                 <label class="form-label semibold" for="cat_nom">Categoria</label>
-                <select id="cat_id" name="cat_id" class="form-control"> </select>
+                <select id="cat_id" name="cat_id" class="form-control" readonly> </select>
               </fieldset>
             </div>
 
