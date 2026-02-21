@@ -33,7 +33,7 @@ function initDataTable(urlAjax) {
                 extend: 'pdfHtml5',
                 text: 'PDF',
                 orientation: 'landscape',
-                pageSize: 'A4',
+                pageSize: 'letter',
                 exportOptions: {
                     columns: ':visible',
                     format: {
