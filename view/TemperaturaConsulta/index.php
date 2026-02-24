@@ -6,7 +6,7 @@ if (isset($_SESSION["usu_id"])) {
     <html>
     <?php require_once("../MainHead/head.php"); ?>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
-    <title>HelpDesk | Home</title>
+    <title>HelpDesk | Temperaturas</title>
     </head>
 
     <body class="with-side-menu">
@@ -25,10 +25,8 @@ if (isset($_SESSION["usu_id"])) {
                         <div class="card-title" style="font-weight:600; font-size:16px;">
                             Grafico Semanal
                         </div>
-
                         <div class="form-inline" style="gap:8px;">
                         </div>
-
                     </header>
                     <div class="card-block">
                         <div id="divgrafico" style="height: 250px;">
@@ -42,9 +40,7 @@ if (isset($_SESSION["usu_id"])) {
                         <div class="card-title" style="font-weight:600; font-size:16px;">
                             Grafico Mensual
                         </div>
-
                         <div class="form-inline">
-
                         </div>
                     </header>
                     <div class="card-block">
@@ -53,6 +49,37 @@ if (isset($_SESSION["usu_id"])) {
                         </div>
                     </div>
                 </section>
+
+                <div class="box-typical box-typical-padding">
+
+                    <!-- Filtros: Estado, Cliente y Rango de Fechas -->
+                    <div class="row" style="margin-bottom:15px;">
+
+                        <div class="col-md-5">
+                            <label>Fechas</label>
+                            <div class="input-group">
+                                <input type="date" id="filter_fecha_ini" class="form-control" />
+                                <span class="input-group-addon">a</span>
+                                <input type="date" id="filter_fecha_fin" class="form-control" />
+                                <span class="input-group-btn">
+                                    <button id="btn_filtrar_mes" class="btn btn-primary">Filtrar</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabla existente -->
+                    <div class="box-typical box-typical-padding">
+                        <table id="tabla_mensual" class="table table-bordered table-responsive">
+                            <thead>
+                                <tr></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+
+                </div>
+
 
             </div>
         </div>
