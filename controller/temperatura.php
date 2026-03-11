@@ -68,35 +68,58 @@ switch ($_GET["op"]) {
                 "data" => $dataSitio,
                 "borderColor" => "hsl(" . (rand(0, 360)) . ", 70%, 50%)",
                 "fill" => false,
-                "spanGaps" => true 
+                "spanGaps" => true
             ];
         }
         echo json_encode(["labels" => $labels, "datasets" => $datasets]);
         break;
 
     case "grafico_mensual":
-        // Datos del mes actual
-        $f_inicio = date('Y-m-01') . " 00:00:00";
-        $f_fin = date('Y-m-t') . " 23:59:59";
+        // 1. Definir rango del mes actual
+        $f_inicio = date('Y-m-01') . " 00:00:00"; // Primer día del mes 
+        $f_fin = date('Y-m-t') . " 23:59:59";    // Último día del mes 
 
         $sitios = $temperatura->get_sitios();
         $labels = [];
+        $ejes_dias = [];
         $num_dias = date('t');
+
+        // 2. Generar etiquetas y array de fechas para comparar
         for ($i = 1; $i <= $num_dias; $i++) {
             $labels[] = "Día $i";
+            // Formato Y-m-d para buscar en la base de datos
+            $ejes_dias[] = date('Y-m-') . str_pad($i, 2, "0", STR_PAD_LEFT);
         }
 
         $datasets = [];
         foreach ($sitios as $s) {
+            $dataSitio = [];
+            // Obtener todos los registros del mes para este sitio 
+            $registros = $temperatura->get_temperaturas_grafico($s['sitio_id'], $f_inicio, $f_fin);
+
+            foreach ($ejes_dias as $dia_buscado) {
+                $valor = null;
+                foreach ($registros as $reg) {
+                    // Buscamos un registro que coincida con el día y sea de las 12:00:00 (o cualquier hora fija)
+                    if (strpos($reg['fecha_hora'], $dia_buscado) !== false && strpos($reg['fecha_hora'], "12:00:00") !== false) {
+                        $valor = $reg['temperatura'];
+                        break;
+                    }
+                }
+                $dataSitio[] = $valor;
+            }
+
             $datasets[] = [
                 "label" => $s['sitio_nombre'],
-                "data" => array_fill(0, $num_dias, rand(20, 35)), // Simulación de promedio diario
+                "data" => $dataSitio,
                 "borderColor" => "hsl(" . (rand(0, 360)) . ", 60%, 60%)",
                 "fill" => false,
-                "borderDash" => [5, 5] // Línea punteada para tendencia mensual
+                "spanGaps" => true, // Para que la línea no se corte si falta un día
+                "borderDash" => [5, 5]
             ];
         }
         echo json_encode(["labels" => $labels, "datasets" => $datasets]);
         break;
+
 }
 ?>
