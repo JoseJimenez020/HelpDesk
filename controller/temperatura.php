@@ -114,7 +114,7 @@ switch ($_GET["op"]) {
                 "data" => $dataSitio,
                 "borderColor" => "hsl(" . (rand(0, 360)) . ", 60%, 60%)",
                 "fill" => false,
-                "spanGaps" => true, // Para que la línea no se corte si falta un día
+                "spanGaps" => true,
                 "borderDash" => [5, 5]
             ];
         }
