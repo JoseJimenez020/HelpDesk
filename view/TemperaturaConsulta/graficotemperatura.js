@@ -58,12 +58,12 @@ function getFilters() {
     };
 }
 
-$(document).ready(function() {
+$(document).ready(function () {
     // 1. Configurar fechas por defecto (Mes Actual)
     const fechaActual = new Date();
     const primerDia = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), 1).toISOString().split('T')[0];
     const ultimoDia = new Date(fechaActual.getFullYear(), fechaActual.getMonth() + 1, 0).toISOString().split('T')[0];
-    
+
     $("#filter_fecha_ini").val(primerDia);
     $("#filter_fecha_fin").val(ultimoDia);
 
@@ -72,7 +72,7 @@ $(document).ready(function() {
 });
 
 // Evento para el botón de filtrar
-$(document).on("click", "#btn_filtrar", function() {
+$(document).on("click", "#btn_filtrar_mes", function () {
     let ini = $("#filter_fecha_ini").val();
     let fin = $("#filter_fecha_fin").val();
     if (ini && fin) {
@@ -88,7 +88,9 @@ function generarTablaMensual(f_inicio, f_fin) {
     // Destruir DataTable previa si existe para poder reconstruir las columnas
     if ($.fn.DataTable.isDataTable('#tabla_mensual')) {
         $('#tabla_mensual').DataTable().destroy();
-        $('#tabla_mensual empty()'); // Limpiar contenido
+
+        // CORRECCIÓN 2: Agrega el punto antes de empty()
+        //$('#tabla_mensual').empty(); // Limpiar contenido
     }
 
     // 1. Calcular listado de fechas para las columnas
@@ -113,23 +115,38 @@ function generarTablaMensual(f_inicio, f_fin) {
     $.post("../../controller/temperatura.php?op=listar_y_datos", {
         f_inicio: f_inicio,
         f_fin: f_fin
-    }, function(data) {
+    }, function (data) {
         let res = JSON.parse(data);
         let htmlRows = "";
 
         res.sitios.forEach(sitio => {
             htmlRows += `<tr><td class="font-weight-bold">${sitio.sitio_nombre}</td>`;
-            
+
             fechasRango.forEach(fecha => {
-                // Buscamos el registro de las 12:00
-                let buscado = res.registros.find(r => 
-                    r.sitio_id == sitio.sitio_id && 
-                    r.fecha_hora == `${fecha} 12:00:00`
-                );
-                
-                let valor = buscado ? buscado.temperatura : "-";
-                // Insertamos el valor como texto plano, sin input [cite: 182, 183]
-                htmlRows += `<td class="text-center">${valor}°</td>`;
+                // Buscamos los 3 registros del día para este sitio
+                let reg07 = res.registros.find(r => r.sitio_id == sitio.sitio_id && r.fecha_hora == `${fecha} 07:00:00`);
+                let reg12 = res.registros.find(r => r.sitio_id == sitio.sitio_id && r.fecha_hora == `${fecha} 12:00:00`);
+                let reg19 = res.registros.find(r => r.sitio_id == sitio.sitio_id && r.fecha_hora == `${fecha} 19:00:00`);
+
+                // Valor a mostrar en la vista principal (12:00)
+                let val12 = reg12 ? reg12.temperatura : "-";
+
+                // Nombres de los responsables (si no hay registro, se queda en N/A)
+                let usu07 = (reg07 && reg07.usu_nom) ? `${reg07.usu_nom} ${reg07.usu_ape || ''}` : 'N/A';
+                let usu12 = (reg12 && reg12.usu_nom) ? `${reg12.usu_nom} ${reg12.usu_ape || ''}` : 'N/A';
+                let usu19 = (reg19 && reg19.usu_nom) ? `${reg19.usu_nom} ${reg19.usu_ape || ''}` : 'N/A';
+
+                // Se construyen los data-attributes para ser leídos por jQuery
+                let dataPayload = `
+                    data-sitio="${sitio.sitio_nombre}" 
+                    data-fecha="${fecha}"
+                    data-t07="${reg07 ? reg07.temperatura + '°' : '-'}" data-u07="${usu07}"
+                    data-t12="${val12 != "-" ? val12 + '°' : '-'}" data-u12="${usu12}"
+                    data-t19="${reg19 ? reg19.temperatura + '°' : '-'}" data-u19="${usu19}"
+                `;
+
+                // Le damos clase 'celda-modal' y cambiamos el estilo para indicar que se puede hacer clic
+                htmlRows += `<td class="text-center celda-modal" style="cursor: pointer; color: #0056b3; font-weight: 500;" ${dataPayload}>${val12}°</td>`;
             });
             htmlRows += `</tr>`;
         });
@@ -187,3 +204,25 @@ function generarTablaMensual(f_inicio, f_fin) {
         });
     });
 }
+
+// Evento para abrir el modal al dar clic en la celda
+$(document).on("click", ".celda-modal", function() {
+    let btn = $(this);
+    
+    // Llenar datos de encabezado
+    $("#mdl_sitio").text(btn.data("sitio"));
+    $("#mdl_fecha").text(btn.data("fecha"));
+    
+    // Llenar temperaturas
+    $("#mdl_t07").text(btn.data("t07"));
+    $("#mdl_t12").text(btn.data("t12"));
+    $("#mdl_t19").text(btn.data("t19"));
+    
+    // Llenar responsables
+    $("#mdl_u07").text("Por: " + btn.data("u07"));
+    $("#mdl_u12").text("Por: " + btn.data("u12"));
+    $("#mdl_u19").text("Por: " + btn.data("u19"));
+    
+    // Lanzar Modal
+    $("#modalDetalleTemp").modal("show");
+});

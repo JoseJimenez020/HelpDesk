@@ -27,17 +27,19 @@ class Temperatura extends Conectar
 
     // Obtener temperaturas de la semana para precargar los inputs
     public function get_temperaturas_por_rango($fecha_inicio, $fecha_fin)
-    {
-        $conectar = parent::conexion();
-        parent::set_names();
-        // Consulta para obtener registros entre dos fechas cronológicamente
-        $sql = "SELECT * FROM tm_temperaturas 
-                WHERE fecha_hora BETWEEN ? AND ? 
-                ORDER BY fecha_hora ASC";
-        $stmt = $conectar->prepare($sql);
-        $stmt->execute([$fecha_inicio, $fecha_fin]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+{
+    $conectar = parent::conexion();
+    parent::set_names();
+    // Se agrega el JOIN para obtener el nombre y apellido del usuario
+    $sql = "SELECT t.*, u.usu_nom, u.usu_ape 
+            FROM tm_temperaturas t
+            LEFT JOIN tm_usuario u ON t.usu_id = u.usu_id
+            WHERE t.fecha_hora BETWEEN ? AND ? 
+            ORDER BY t.fecha_hora ASC";
+    $stmt = $conectar->prepare($sql);
+    $stmt->execute([$fecha_inicio, $fecha_fin]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
     // Guardar o actualizar registro
     public function guardar_temperatura($fecha_hora, $temp, $sitio_id, $usu_id)
