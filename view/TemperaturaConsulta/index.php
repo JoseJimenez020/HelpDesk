@@ -7,6 +7,7 @@ if (isset($_SESSION["usu_id"])) {
     <?php require_once("../MainHead/head.php"); ?>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
     <title>HelpDesk | Temperaturas</title>
+    
     </head>
 
     <body class="with-side-menu">
@@ -70,12 +71,12 @@ if (isset($_SESSION["usu_id"])) {
 
                     <!-- Tabla existente -->
                     <div class="box-typical box-typical-padding">
-                        <table id="tabla_mensual" class="table table-bordered table-responsive">
-                            <thead>
-                                <tr></tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+                        <div id="contenedor_tabla_mensual"> <!-- Contenedor crítico -->
+                            <table id="tabla_mensual" class="table table-bordered">
+                                <thead></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
                     </div>
 
                 </div>

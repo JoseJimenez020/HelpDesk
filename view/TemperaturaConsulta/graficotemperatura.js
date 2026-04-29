@@ -85,15 +85,16 @@ $(document).on("click", "#btn_filtrar_mes", function () {
 });
 
 function generarTablaMensual(f_inicio, f_fin) {
-    // Destruir DataTable previa si existe para poder reconstruir las columnas
+    // 1. Destrucción "nuclear" de la tabla y su HTML
     if ($.fn.DataTable.isDataTable('#tabla_mensual')) {
-        $('#tabla_mensual').DataTable().destroy();
-
-        // CORRECCIÓN 2: Agrega el punto antes de empty()
-        //$('#tabla_mensual').empty(); // Limpiar contenido
+        // destroy(true) elimina el DataTable y el elemento <table> del DOM
+        $('#tabla_mensual').DataTable().destroy(true);
     }
 
-    // 1. Calcular listado de fechas para las columnas
+    // 2. Recreamos el elemento table limpio dentro del contenedor
+    $("#contenedor_tabla_mensual").html('<table id="tabla_mensual" class="table table-bordered table-responsive"><thead></thead><tbody></tbody></table>');
+
+    // 3. Cálculo de fechas para las nuevas columnas
     let fechasRango = [];
     let inicio = new Date(f_inicio + "T00:00:00");
     let fin = new Date(f_fin + "T00:00:00");
@@ -102,8 +103,8 @@ function generarTablaMensual(f_inicio, f_fin) {
         fechasRango.push(new Date(d).toISOString().split('T')[0]);
     }
 
-    // 2. Crear los encabezados de texto (Días del Mes)
-    let headHtml = '<tr><th>Site / Día</th>';
+    // 4. Construcción del encabezado dinámico
+    let headHtml = '<tr><th style="min-width:150px;">Site / Día</th>';
     fechasRango.forEach(f => {
         let dia = f.split('-')[2];
         headHtml += `<th class="text-center">${dia}</th>`;
@@ -111,7 +112,7 @@ function generarTablaMensual(f_inicio, f_fin) {
     headHtml += '</tr>';
     $("#tabla_mensual thead").html(headHtml);
 
-    // 3. Consultar datos
+    // 5. Petición AJAX
     $.post("../../controller/temperatura.php?op=listar_y_datos", {
         f_inicio: f_inicio,
         f_fin: f_fin
@@ -123,106 +124,71 @@ function generarTablaMensual(f_inicio, f_fin) {
             htmlRows += `<tr><td class="font-weight-bold">${sitio.sitio_nombre}</td>`;
 
             fechasRango.forEach(fecha => {
-                // Buscamos los 3 registros del día para este sitio
                 let reg07 = res.registros.find(r => r.sitio_id == sitio.sitio_id && r.fecha_hora == `${fecha} 07:00:00`);
                 let reg12 = res.registros.find(r => r.sitio_id == sitio.sitio_id && r.fecha_hora == `${fecha} 12:00:00`);
                 let reg19 = res.registros.find(r => r.sitio_id == sitio.sitio_id && r.fecha_hora == `${fecha} 19:00:00`);
 
-                // Valor a mostrar en la vista principal (12:00)
                 let val12 = reg12 ? reg12.temperatura : "-";
-
-                // Nombres de los responsables (si no hay registro, se queda en N/A)
                 let usu07 = (reg07 && reg07.usu_nom) ? `${reg07.usu_nom} ${reg07.usu_ape || ''}` : 'N/A';
                 let usu12 = (reg12 && reg12.usu_nom) ? `${reg12.usu_nom} ${reg12.usu_ape || ''}` : 'N/A';
                 let usu19 = (reg19 && reg19.usu_nom) ? `${reg19.usu_nom} ${reg19.usu_ape || ''}` : 'N/A';
 
-                // Se construyen los data-attributes para ser leídos por jQuery
                 let dataPayload = `
-                    data-sitio="${sitio.sitio_nombre}" 
-                    data-fecha="${fecha}"
+                    data-sitio="${sitio.sitio_nombre}" data-fecha="${fecha}"
                     data-t07="${reg07 ? reg07.temperatura + '°' : '-'}" data-u07="${usu07}"
                     data-t12="${val12 != "-" ? val12 + '°' : '-'}" data-u12="${usu12}"
                     data-t19="${reg19 ? reg19.temperatura + '°' : '-'}" data-u19="${usu19}"
                 `;
 
-                // Le damos clase 'celda-modal' y cambiamos el estilo para indicar que se puede hacer clic
-                htmlRows += `<td class="text-center celda-modal" style="cursor: pointer; color: #0056b3; font-weight: 500;" ${dataPayload}>${val12}°</td>`;
+                htmlRows += `<td class="text-center celda-modal" style="cursor: pointer; color: #0056b3;" ${dataPayload}>${val12}${val12 !== '-' ? '°' : ''}</td>`;
             });
             htmlRows += `</tr>`;
         });
 
         $("#tabla_mensual tbody").html(htmlRows);
 
-        // 4. Inicializar DataTables con los botones de exportación 
+        // 6. Inicialización de la nueva instancia de DataTables
         $('#tabla_mensual').DataTable({
-            "aProcessing": true,
-            "aServerSide": false, // Los datos ya están cargados en el DOM
             dom: 'Bfrtip',
             "searching": true,
             "lengthChange": false,
             "colReorder": true,
             "buttons": [
-                {
-                    extend: 'copyHtml5',
-                    text: 'Copiar',
-                    className: 'btn btn-sm btn-default'
-                },
-                {
-                    extend: 'excelHtml5',
-                    text: 'Excel',
-                    title: 'Reporte de Temperaturas Mensual',
-                    className: 'btn btn-sm btn-success'
-                },
-                {
-                    extend: 'csvHtml5',
-                    text: 'CSV',
-                    className: 'btn btn-sm btn-info'
-                },
-                {
-                    extend: 'pdfHtml5',
-                    text: 'PDF',
-                    orientation: 'landscape',
-                    pageSize: 'A4',
-                    title: 'Reporte de Temperaturas Mensual',
-                    className: 'btn btn-sm btn-danger'
-                }
+                { extend: 'copyHtml5', text: 'Copiar', className: 'btn btn-sm btn-default' },
+                { extend: 'excelHtml5', text: 'Excel', className: 'btn btn-sm btn-success' },
+                { extend: 'csvHtml5', text: 'CSV', className: 'btn btn-sm btn-info' },
+                { extend: 'pdfHtml5', text: 'PDF', orientation: 'landscape', className: 'btn btn-sm btn-danger' }
             ],
             "language": {
-                "sProcessing": "Procesando...",
                 "sSearch": "Buscar Site:",
-                "sZeroRecords": "No se encontraron resultados",
-                "oPaginate": {
-                    "sNext": "Siguiente",
-                    "sPrevious": "Anterior"
-                }
+                "oPaginate": { "sNext": "Sig.", "sPrevious": "Ant." }
             },
-            "ordering": true,
-            "responsive": false, // Desactivado para mantener la estructura de calendario
-            "bInfo": true,
             "iDisplayLength": 15,
-            "autoWidth": false
+            "autoWidth": false,
+            "scrollX": true 
         });
     });
 }
 
+
 // Evento para abrir el modal al dar clic en la celda
-$(document).on("click", ".celda-modal", function() {
+$(document).on("click", ".celda-modal", function () {
     let btn = $(this);
-    
+
     // Llenar datos de encabezado
     $("#mdl_sitio").text(btn.data("sitio"));
     $("#mdl_fecha").text(btn.data("fecha"));
-    
+
     // Llenar temperaturas
     $("#mdl_t07").text(btn.data("t07"));
     $("#mdl_t12").text(btn.data("t12"));
     $("#mdl_t19").text(btn.data("t19"));
-    
+
     // Llenar responsables
     $("#mdl_u07").text("Por: " + btn.data("u07"));
     $("#mdl_u12").text("Por: " + btn.data("u12"));
     $("#mdl_u19").text("Por: " + btn.data("u19"));
-    
+
     // Lanzar Modal
     $("#modalDetalleTemp").modal("show");
 });
