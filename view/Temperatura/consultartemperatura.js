@@ -53,7 +53,7 @@ function generarTablaTemperaturas() {
                     htmlRows += `
                         <div class="input-group input-group-sm mb-1">
                             <div class="input-group-prepend"><span class="input-group-text">${hora}</span></div>
-                            <input type="number" step="0.1" class="form-control temp-input" 
+                            <input type="number" step="1" class="form-control temp-input" 
                                 data-sitio="${sitio.sitio_id}" data-fecha="${fecha}" data-hora="${hora}" value="${valor}">
                         </div>`;
                 });
