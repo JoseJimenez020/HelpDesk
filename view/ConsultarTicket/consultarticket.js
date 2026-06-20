@@ -132,6 +132,7 @@ function initDataTable(urlAjax) {
         },
 
         "ordering": true,
+        "order": [[0, "desc"]],
         "bDestroy": true,
         "responsive": true,
         "bInfo": true,

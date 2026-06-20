@@ -191,6 +191,38 @@ function loadChartsAndTotals(usu_id, rol_id, start_date, end_date) {
     });
 }
 
+// --- FUNCIÓN 3: Carga la tabla de Tickets Activos (#tabla_tickets_home) ---
+function loadTicketsActivosHome(usu_id, rol_id) {
+    $.post("../../controller/ticket.php?op=listar_home", { usu_id: usu_id, rol_id: rol_id }, function (data) {
+        var tickets = [];
+        try {
+            tickets = JSON.parse(data);
+        } catch (e) {
+            tickets = [];
+        }
+
+        var $tbody = $('#tabla_tickets_home tbody');
+        $tbody.empty();
+
+        if (!tickets || tickets.length === 0) {
+            $tbody.append('<tr><td colspan="3" class="text-center text-muted">No hay tickets para mostrar</td></tr>');
+            return;
+        }
+
+        tickets.forEach(function (row) {
+            $tbody.append(
+                '<tr>' +
+                    '<td>' + row.tick_id + '</td>' +
+                    '<td>' + row.cat_nom + '</td>' +
+                    '<td>' + row.tick_titulo + '</td>' +
+                '</tr>'
+            );
+        });
+    }).fail(function () {
+        $('#tabla_tickets_home tbody').html('<tr><td colspan="3" class="text-center text-muted">Error al cargar tickets</td></tr>');
+    });
+}
+
 $(document).ready(function () {
     init();
 
@@ -204,6 +236,7 @@ $(document).ready(function () {
 
     // 1. Configurar SELECT para Gráfico Estadístico (#select_semana_graf)
     loadWeekOptions('#select_semana_graf', usu_id);
+    loadTicketsActivosHome(usu_id, rol_id);
     loadMonthOptions(); // Cargar opciones de mes
     
     $('#select_mes_graf').on('change', function() {

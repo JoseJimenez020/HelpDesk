@@ -77,6 +77,65 @@ class Ticket extends Conectar
         return $stmt->fetchAll();
     }
 
+    public function listar_ticket_activos_home($usu_id = null)
+    {
+        $conectar = parent::conexion();
+        parent::set_names();
+
+        // 1. Tickets activos (Abierto o En espera)
+        $sql = "SELECT
+                tm_ticket.tick_id,
+                tm_ticket.tick_titulo,
+                tm_categoria.cat_nom
+            FROM tm_ticket
+            INNER JOIN tm_categoria ON tm_ticket.cat_id = tm_categoria.cat_id
+            WHERE tm_ticket.est = 1
+              AND tm_ticket.tick_estado IN ('Abierto', 'En espera')";
+
+        $params = array();
+        if (!empty($usu_id)) {
+            $sql .= " AND tm_ticket.usu_id = ?";
+            $params[] = $usu_id;
+        }
+
+        $sql .= " ORDER BY tm_ticket.fech_crea DESC";
+
+        $stmt = $conectar->prepare($sql);
+        foreach ($params as $i => $p) {
+            $stmt->bindValue($i + 1, $p);
+        }
+        $stmt->execute();
+        $resultado = $stmt->fetchAll();
+
+        // 2. Si no hay activos, traemos los ultimos 5 (cualquier estado)
+        if (count($resultado) == 0) {
+            $sql2 = "SELECT
+                    tm_ticket.tick_id,
+                    tm_ticket.tick_titulo,
+                    tm_categoria.cat_nom
+                FROM tm_ticket
+                INNER JOIN tm_categoria ON tm_ticket.cat_id = tm_categoria.cat_id
+                WHERE tm_ticket.est = 1";
+
+            $params2 = array();
+            if (!empty($usu_id)) {
+                $sql2 .= " AND tm_ticket.usu_id = ?";
+                $params2[] = $usu_id;
+            }
+
+            $sql2 .= " ORDER BY tm_ticket.fech_crea DESC LIMIT 5";
+
+            $stmt2 = $conectar->prepare($sql2);
+            foreach ($params2 as $i => $p) {
+                $stmt2->bindValue($i + 1, $p);
+            }
+            $stmt2->execute();
+            $resultado = $stmt2->fetchAll();
+        }
+
+        return $resultado;
+    }
+
     public function insert_ticket($usu_id, $cli_id, $cat_id, $tick_titulo, $tick_descrip, $pot_antes, $pot_desp)
     {
         $conectar = parent::conexion();

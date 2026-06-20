@@ -171,6 +171,27 @@ switch ($_GET["op"]) {
         echo json_encode($results);
         break;
 
+    case "listar_home":
+        $usu_id_post = isset($_POST['usu_id']) ? trim($_POST['usu_id']) : '';
+        $rol_id_post = isset($_POST['rol_id']) ? trim($_POST['rol_id']) : '';
+
+        // Si es rol Usuario (1) filtramos por su propio usu_id; Soporte (2) ve todos
+        $filtro_usu = ($rol_id_post == 1) ? $usu_id_post : null;
+
+        $datos = $ticket->listar_ticket_activos_home($filtro_usu);
+
+        $data = array();
+        foreach ($datos as $row) {
+            $data[] = array(
+                "tick_id" => $row["tick_id"],
+                "cat_nom" => htmlspecialchars($row["cat_nom"]),
+                "tick_titulo" => htmlspecialchars($row["tick_titulo"])
+            );
+        }
+
+        echo json_encode($data);
+        break;
+
 
     case "listar":
         $estado = isset($_POST['estado']) ? trim($_POST['estado']) : '';

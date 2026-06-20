@@ -58,47 +58,71 @@ if (isset($_SESSION["usu_id"])) {
 					</div>
 				</div>
 
-				<section class="card">
-					<header class="card-header">
-						<div class="card-title" style="font-weight:600; font-size:16px;">
-							Grafico Estadístico
-						</div>
+				<div class="row">
+					<div class="col-lg-8">
 
-						<div class="form-inline" style="gap:8px;">
+						<section class="card">
+							<header class="card-header">
+								<div class="card-title" style="font-weight:600; font-size:16px;">
+									Grafico Estadístico
+								</div>
 
-							<select id="select_semana_graf" class="form-control"
-								style="display:inline-block; width:auto; font-size:13px; padding:4px 8px;">
-								<!-- opciones cargadas por AJAX (semanas para la gráfica principal) -->
-							</select>
+								<div class="form-inline" style="gap:8px;">
+									<select id="select_semana_graf" class="form-control"
+										style="display:inline-block; width:auto; font-size:13px; padding:4px 8px;">
+									</select>
 
-							<select id="select_mes_graf" class="form-control"
-								style="display:inline-block; width:auto; font-size:13px; padding:4px 8px;">
-								<option value="">Seleccionar Mes</option>
-							</select>
+									<select id="select_mes_graf" class="form-control"
+										style="display:inline-block; width:auto; font-size:13px; padding:4px 8px;">
+										<option value="">Seleccionar Mes</option>
+									</select>
+								</div>
+							</header>
+							<div class="card-block">
+								<div id="divgrafico" style="height: 250px;"></div>
+							</div>
+						</section>
 
-						</div>
+						<section class="card">
+							<header class="card-header d-flex align-items-center justify-content-between">
+								<div class="card-title" style="font-weight:600; font-size:16px;">
+									Tiempo de Resolución
+								</div>
 
-					</header>
-					<div class="card-block">
-						<div id="divgrafico" style="height: 250px;"></div>
+								<div class="form-inline">
+									<select id="select_semana" class="form-control"
+										style="display:inline-block; width:auto; font-size:13px; padding:4px 8px;"></select>
+								</div>
+							</header>
+							<div class="card-block">
+								<div id="divgraficotiempo" style="height: 250px;"></div>
+							</div>
+						</section>
+
 					</div>
-				</section>
 
-				<section class="card">
-					<header class="card-header d-flex align-items-center justify-content-between">
-						<div class="card-title" style="font-weight:600; font-size:16px;">
-							Tiempo de Resolución
-						</div>
-
-						<div class="form-inline">
-							<select id="select_semana" class="form-control"
-								style="display:inline-block; width:auto; font-size:13px; padding:4px 8px;"></select>
-						</div>
-					</header>
-					<div class="card-block">
-						<div id="divgraficotiempo" style="height: 250px;"></div>
+					<div class="col-lg-4">
+						<section class="card">
+							<div class="card-block" style="max-height: 560px; overflow-y: auto;">
+								<table id="tabla_tickets_home" class="table table-striped table-bordered"
+									style="width:100%;">
+									<thead>
+										<tr>
+											<th>N°</th>
+											<th>Categoría</th>
+											<th>Servicios Afectados</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td colspan="3" class="text-center text-muted">Cargando...</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</section>
 					</div>
-				</section>
+				</div>
 
 			</div>
 		</div>
