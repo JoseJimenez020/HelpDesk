@@ -34,6 +34,7 @@ if (isset($_SESSION["usu_id"])) {
 								</article>
 							</div>
 							<div class="col-sm-4">
+								<a href="../ConsultarTicket/">
 								<article class="statistic-box yellow">
 									<div>
 										<div class="number" id="lbltotalabierto"></div>
@@ -42,6 +43,7 @@ if (isset($_SESSION["usu_id"])) {
 										</div>
 									</div>
 								</article>
+								</a>
 							</div>
 							<div class="col-sm-4">
 								<article class="statistic-box red">

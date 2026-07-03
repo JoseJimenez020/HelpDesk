@@ -16,10 +16,10 @@ function loadMonthOptions() {
         "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
         "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
     ];
-    
+
     // Obtenemos el año actual
     var year = new Date().getFullYear();
-    
+
     // Limpiamos y agregamos opción por defecto
     $('#select_mes_graf').empty();
     $('#select_mes_graf').append('<option value="">Seleccionar Mes</option>');
@@ -39,7 +39,7 @@ function getWeekRangeFromString(rangeStr) {
 // Calcula lunes y domingo de la semana actual/dada
 function getWeekRange(date) {
     var d = new Date(date);
-    var day = d.getDay(); 
+    var day = d.getDay();
     var diffToMonday = (day + 6) % 7;
     var monday = new Date(d);
     monday.setDate(d.getDate() - diffToMonday);
@@ -65,7 +65,7 @@ function formatMinutesToHrMin(mins) {
 function loadWeekOptions(selector_id, usu_id) {
     $.post("../../controller/usuario.php?op=semanas", { usu_id: usu_id }, function (html) {
         $(selector_id).html(html);
-        
+
         // Si no hay opciones, crear la semana actual
         if ($(selector_id + ' option').length === 0) {
             var wk = getWeekRange(new Date());
@@ -73,7 +73,7 @@ function loadWeekOptions(selector_id, usu_id) {
             var val = wk.start + '|' + wk.end;
             $(selector_id).append($('<option>', { value: val, text: 'Semana ' + display }));
         }
-        
+
         // Seleccionar la primera opción y disparar el evento change para cargar la gráfica
         $(selector_id).prop('selectedIndex', 0).trigger('change');
     }).fail(function () {
@@ -89,7 +89,7 @@ function loadWeekOptions(selector_id, usu_id) {
 // --- FUNCIÓN 1: Carga SOLO el Gráfico Estadístico (#divgrafico) ---
 function loadGraficoEstadistico(usu_id, rol_id, start_date, end_date) {
     $('#divgrafico').empty(); // Limpiar solo este gráfico
-    
+
     // Preparar fechas para el controlador
     var start_dt = start_date ? (start_date + " 00:00:00") : null;
     var end_dt = end_date ? (end_date + " 23:59:59") : null;
@@ -181,7 +181,7 @@ function loadChartsAndTotals(usu_id, rol_id, start_date, end_date) {
                 hoverCallback: function (index, options, content, row) {
                     var label = options.labels[0] || 'Promedio';
                     return '<div class="morris-hover-row-label">' + row.nom + '</div>' +
-                           '<div class="morris-hover-point">' + label + ': ' + formatMinutesToHrMin(row.total) + '</div>';
+                        '<div class="morris-hover-point">' + label + ': ' + formatMinutesToHrMin(row.total) + '</div>';
                 }
             });
             $('#tiempo_unidad').text('Promedio (min)');
@@ -212,9 +212,9 @@ function loadTicketsActivosHome(usu_id, rol_id) {
         tickets.forEach(function (row) {
             $tbody.append(
                 '<tr>' +
-                    '<td>' + row.tick_id + '</td>' +
-                    '<td>' + row.cat_nom + '</td>' +
-                    '<td>' + row.tick_titulo + '</td>' +
+                '<td><a href="../DetalleTicket/index.php?ID=' + row.tick_id + '">' + row.tick_id + '</a></td>' +
+                '<td>' + row.cat_nom + '</td>' +
+                '<td><a href="../DetalleTicket/index.php?ID=' + row.tick_id + '">' + row.tick_titulo + '</a></td>' +
                 '</tr>'
             );
         });
@@ -238,8 +238,8 @@ $(document).ready(function () {
     loadWeekOptions('#select_semana_graf', usu_id);
     loadTicketsActivosHome(usu_id, rol_id);
     loadMonthOptions(); // Cargar opciones de mes
-    
-    $('#select_mes_graf').on('change', function() {
+
+    $('#select_mes_graf').on('change', function () {
         var mesIndex = $(this).val();
 
         // Si se selecciona "Seleccionar Mes" (vacío), no hacemos nada o recargamos la semana actual
@@ -247,7 +247,7 @@ $(document).ready(function () {
 
         // Resetear el selector de semanas para que el usuario sepa que está viendo MESES
         // (Ponemos el valor en null o vacío visualmente)
-        $('#select_semana_graf').val(''); 
+        $('#select_semana_graf').val('');
 
         // Calcular primer y último día del mes seleccionado
         var year = new Date().getFullYear();
