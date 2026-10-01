@@ -45,7 +45,7 @@ function generarTablaTemperaturas() {
 
             fechasSemana.forEach(fecha => {
                 htmlRows += `<td>`;
-                ["07:00", "12:00", "19:00"].forEach(hora => {
+                ["07:00", "12:00", "20:00"].forEach(hora => {
                     // Buscar si ya existe valor para este input
                     let buscado = res.registros.find(r => r.sitio_id == sitio.sitio_id && r.fecha_hora == `${fecha} ${hora}:00`);
                     let valor = buscado ? buscado.temperatura : "";

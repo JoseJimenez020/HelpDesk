@@ -22,7 +22,7 @@
                         <div style="font-size: 11px; color: gray;" id="mdl_u12"></div>
                     </li>
                     <li class="list-group-item">
-                        <strong>19:00 hrs:</strong> <span id="mdl_t19" class="float-right badge badge-primary">-</span>
+                        <strong>20:00 hrs:</strong> <span id="mdl_t19" class="float-right badge badge-primary">-</span>
                         <div style="font-size: 11px; color: gray;" id="mdl_u19"></div>
                     </li>
                 </ul>

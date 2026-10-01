@@ -149,7 +149,7 @@ function generarTablaMensual(f_inicio, f_fin) {
                     return r.sitio_id == sitio.sitio_id && r.fecha_hora === fecha + ' 12:00:00';
                 });
                 var reg19 = res.registros.find(function (r) {
-                    return r.sitio_id == sitio.sitio_id && r.fecha_hora === fecha + ' 19:00:00';
+                    return r.sitio_id == sitio.sitio_id && r.fecha_hora === fecha + ' 20:00:00';
                 });
 
                 var val12 = reg12 ? reg12.temperatura : '-';

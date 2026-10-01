@@ -39,7 +39,7 @@ switch ($_GET["op"]) {
         // Generar etiquetas de tiempo reales
         for ($i = 0; $i < 7; $i++) {
             $fecha_temp = date('Y-m-d', strtotime("sunday last week +$i days"));
-            foreach (["07:00", "12:00", "19:00"] as $h) {
+            foreach (["07:00", "12:00", "20:00"] as $h) {
                 $labels[] = date('D', strtotime($fecha_temp)) . " $h";
                 $ejes_fechas[] = "$fecha_temp $h:00";
             }
