@@ -27,40 +27,51 @@ class Temperatura extends Conectar
 
     // Obtener temperaturas de la semana para precargar los inputs
     public function get_temperaturas_por_rango($fecha_inicio, $fecha_fin)
-{
-    $conectar = parent::conexion();
-    parent::set_names();
-    // Se agrega el JOIN para obtener el nombre y apellido del usuario
-    $sql = "SELECT t.*, u.usu_nom, u.usu_ape 
+    {
+        $conectar = parent::conexion();
+        parent::set_names();
+        // Se agrega el JOIN para obtener el nombre y apellido del usuario
+        $sql = "SELECT t.*, u.usu_nom, u.usu_ape 
             FROM tm_temperaturas t
             LEFT JOIN tm_usuario u ON t.usu_id = u.usu_id
             WHERE t.fecha_hora BETWEEN ? AND ? 
             ORDER BY t.fecha_hora ASC";
-    $stmt = $conectar->prepare($sql);
-    $stmt->execute([$fecha_inicio, $fecha_fin]);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
+        $stmt = $conectar->prepare($sql);
+        $stmt->execute([$fecha_inicio, $fecha_fin]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     // Guardar o actualizar registro
-    public function guardar_temperatura($fecha_hora, $temp, $sitio_id, $usu_id)
+    public function guardar_temperatura($fecha_hora, $temp, $sitio_id, $usu_id, $sobrescribir = true)
     {
         $conectar = parent::conexion();
         parent::set_names();
-        // Primero verificamos si ya existe un registro para ese sitio en esa hora exacta
-        $sql_check = "SELECT temp_id FROM tm_temperaturas WHERE fecha_hora = ? AND sitio_id = ?";
-        $stmt = $conectar->prepare($sql_check);
+
+        $stmt = $conectar->prepare(
+            "SELECT temp_id, temperatura FROM tm_temperaturas WHERE fecha_hora = ? AND sitio_id = ?"
+        );
         $stmt->execute([$fecha_hora, $sitio_id]);
-        $existe = $stmt->fetch();
+        $existe = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($existe) {
-            $sql = "UPDATE tm_temperaturas SET temperatura = ?, usu_id = ? WHERE temp_id = ?";
-            $stmt = $conectar->prepare($sql);
+            if (!$sobrescribir) {
+                return true;   // respetar lo ya capturado
+            }
+            // Mismo valor: no tocar el usuario que lo registró
+            if (
+                $existe['temperatura'] !== null
+                && abs((float) $existe['temperatura'] - (float) $temp) < 0.0001
+            ) {
+                return true;
+            }
+            $stmt = $conectar->prepare("UPDATE tm_temperaturas SET temperatura = ?, usu_id = ? WHERE temp_id = ?");
             return $stmt->execute([$temp, $usu_id, $existe['temp_id']]);
-        } else {
-            $sql = "INSERT INTO tm_temperaturas (fecha_hora, temperatura, sitio_id, usu_id) VALUES (?, ?, ?, ?)";
-            $stmt = $conectar->prepare($sql);
-            return $stmt->execute([$fecha_hora, $temp, $sitio_id, $usu_id]);
         }
+
+        $stmt = $conectar->prepare(
+            "INSERT INTO tm_temperaturas (fecha_hora, temperatura, sitio_id, usu_id) VALUES (?, ?, ?, ?)"
+        );
+        return $stmt->execute([$fecha_hora, $temp, $sitio_id, $usu_id]);
     }
 }
 ?>

@@ -53,8 +53,9 @@ function generarTablaTemperaturas() {
                     htmlRows += `
                         <div class="input-group input-group-sm mb-1">
                             <div class="input-group-prepend"><span class="input-group-text">${hora}</span></div>
-                            <input type="text" class="form-control temp-input" 
-                                data-sitio="${sitio.sitio_id}" data-fecha="${fecha}" data-hora="${hora}" value="${valor}">
+                            <input type="text" class="form-control temp-input"
+                                data-sitio="${sitio.sitio_id}" data-fecha="${fecha}" data-hora="${hora}"
+                                data-original="${valor}" value="${valor}">
                         </div>`;
                 });
                 htmlRows += `</td>`;
@@ -74,18 +75,28 @@ function generarTablaTemperaturas() {
 $(document).on("click", "#btnGuardar", function () {
     let puntos = [];
     $(".temp-input").each(function () {
-        if ($(this).val() !== "") {
+        let actual   = $(this).val().trim();
+        let original = ($(this).attr("data-original") || "").trim();
+        if (actual !== "" && actual !== original) {
             puntos.push({
                 sitio_id: $(this).data("sitio"),
                 fecha_hora: $(this).data("fecha") + " " + $(this).data("hora") + ":00",
-                valor: $(this).val()
+                valor: actual
             });
         }
     });
 
+    if (puntos.length === 0) {
+        swal("Aviso", "No hay cambios que guardar", "info");
+        return;
+    }
+
     $.post("../../controller/temperatura.php?op=guardar_todo", { puntos: puntos }, function (data) {
         let res = JSON.parse(data);
         if (res.ok) {
+            $(".temp-input").each(function () {
+                $(this).attr("data-original", $(this).val().trim());
+            });
             swal("Correcto", "Temperaturas guardadas correctamente", "success");
         } else {
             swal("Error", "No se pudieron guardar los datos", "error");
