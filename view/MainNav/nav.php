@@ -69,6 +69,12 @@ if ($_SESSION["rol_id"] == 1) {
                     <span class="lbl">Temperaturas Consulta</span>
                 </a>
             </li>
+            <li class="blue-dirty">
+                <a href="..\Incidencias\">
+                    <span class="glyphicon glyphicon-th"></span>
+                    <span class="lbl">Incidencias</span>
+                </a>
+            </li>
         </ul>
     </nav>
     <?php
